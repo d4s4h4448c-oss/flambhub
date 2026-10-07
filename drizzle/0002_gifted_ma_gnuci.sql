@@ -1,0 +1,1 @@
+ALTER TABLE `hunt_slots` ADD `is_bounty` integer DEFAULT false NOT NULL;

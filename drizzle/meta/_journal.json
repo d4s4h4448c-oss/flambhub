@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791391878321,
+      "tag": "0000_lying_mariko_yashida",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791394459725,
+      "tag": "0001_slippery_gideon",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791396704400,
+      "tag": "0002_gifted_ma_gnuci",
+      "breakpoints": true
+    }
+  ]
+}
