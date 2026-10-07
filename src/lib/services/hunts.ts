@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { badRequest, conflict, notFound } from "@/lib/api/errors";
+import { badRequest, notFound } from "@/lib/api/errors";
 import { db } from "@/lib/db";
 import { bonusHunts, huntSlots, type HuntSlot } from "@/lib/db/schema";
 import type { Currency } from "@/lib/data/currencies";
@@ -104,35 +104,6 @@ export async function listHunts(ownerCode: string | null): Promise<HuntSummary[]
     });
   }
   return result;
-}
-
-/** Hunts communautaires (sans code) : visibles par tous et liables à un code. */
-export async function listCommunityHunts(): Promise<HuntSummary[]> {
-  return listHunts(null);
-}
-
-/**
- * Lie un hunt communautaire (sans code) au code du demandeur.
- * Un hunt déjà lié ne peut pas être volé (409).
- */
-export async function claimHunt(
-  huntId: string,
-  ownerCode: string,
-): Promise<HuntWithSlots> {
-  const rows = await db
-    .select()
-    .from(bonusHunts)
-    .where(eq(bonusHunts.id, huntId))
-    .limit(1);
-  if (!rows[0]) throw notFound("Session Bonus Hunt introuvable.");
-  if (rows[0].ownerCode !== null) {
-    throw conflict("Ce hunt est déjà lié à un code.");
-  }
-  await db
-    .update(bonusHunts)
-    .set({ ownerCode, updatedAt: new Date() })
-    .where(eq(bonusHunts.id, huntId));
-  return getHunt(huntId, ownerCode);
 }
 
 export async function createHunt(

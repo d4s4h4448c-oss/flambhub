@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import AdminTokenField from "@/components/AdminTokenField";
 import WheelApp from "@/components/wheel/WheelApp";
 import { IconWheel } from "@/components/ui/Icons";
 
@@ -18,10 +17,7 @@ export default function RouePage() {
         title="Roue"
         subtitle="Crée des roues personnalisées, pondère les entrées et lance des tirages équitables : le résultat est calculé et enregistré côté serveur."
       />
-      <div className="space-y-6">
-        <AdminTokenField />
-        <WheelApp />
-      </div>
+      <WheelApp />
     </div>
   );
 }

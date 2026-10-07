@@ -95,7 +95,6 @@ function SummaryCard({
 
 export default function HuntApp() {
   const [hunts, setHunts] = useState<HuntSummary[]>([]);
-  const [communityHunts, setCommunityHunts] = useState<HuntSummary[]>([]);
   const [detail, setDetail] = useState<HuntDetail | null>(null);
   const [charts, setCharts] = useState<HuntChartData | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -121,9 +120,14 @@ export default function HuntApp() {
   const [deletingHunt, setDeletingHunt] = useState(false);
 
   const [linkOpen, setLinkOpen] = useState(false);
-  const [linkCode, setLinkCode] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : getClientCode(),
-  );
+  const [linkCode, setLinkCode] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const existing = getClientCode();
+    if (existing) return existing;
+    const code = newClientCode();
+    setClientCode(code);
+    return code;
+  });
   const [copied, setCopied] = useState(false);
 
   const loadHunts = useCallback(async () => {
@@ -132,7 +136,6 @@ export default function HuntApp() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Impossible de charger les sessions.");
       setHunts(data.hunts ?? []);
-      setCommunityHunts(data.community ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de chargement.");
     } finally {
@@ -198,24 +201,6 @@ export default function HuntApp() {
       /* presse-papiers indisponible */
     }
   }, [linkCode]);
-
-  const handleClaim = useCallback(
-    async (huntId: string) => {
-      setError(null);
-      try {
-        const res = await flambFetch(`/api/hunts/${huntId}/claim`, {
-          method: "POST",
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error ?? "Impossible de lier le hunt.");
-        await loadHunts();
-        selectHunt(huntId);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Erreur.");
-      }
-    },
-    [loadHunts, selectHunt],
-  );
 
   const handleCreateHunt = async () => {
     if (!name.trim() || creating) return;
@@ -400,10 +385,11 @@ export default function HuntApp() {
         {linkOpen && (
           <div className="mt-4 space-y-3 border-t border-border pt-4">
             <p className="text-sm text-muted">
-              Ce code est unique : entre-le dans les réglages de
-              l&apos;extension (avec l&apos;URL du site). Tu pourras ajouter tes
-              bonus pendant que tu joues, et tout sera synchronisé ici — avec le
-              RTP, les stats et les graphiques.
+              Ton code est unique et privé : seuls tes hunts te sont visibles.
+              Entre ce code (avec l&apos;URL du site) dans les réglages de
+              l&apos;extension pour ajouter tes bonus pendant que tu joues —
+              tout sera synchronisé ici, avec le RTP, les stats et les
+              graphiques.
             </p>
             {linkCode ? (
               <>
@@ -438,8 +424,8 @@ export default function HuntApp() {
                   </Button>
                 </div>
                 <p className="text-xs text-muted">
-                  Après liaison, cette page n&apos;affiche que tes hunts. Le code
-                  est enregistré dans ce navigateur.
+                  Le code est enregistré dans ce navigateur : tes données sont
+                  privées et conservées, visibles uniquement avec ce code.
                 </p>
               </>
             ) : (
@@ -493,7 +479,7 @@ export default function HuntApp() {
         </div>
       </Card>
 
-      {hunts.length === 0 && communityHunts.length === 0 && !detail ? (
+      {hunts.length === 0 && !detail ? (
         <EmptyState
           icon={<IconSlot />}
           title="Aucune session Bonus Hunt"
@@ -529,42 +515,6 @@ export default function HuntApp() {
               </button>
             ))}
 
-            {communityHunts.length > 0 && (
-              <div className="pt-4">
-                <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-muted">
-                  Hunts communautaires
-                </h3>
-                <div className="space-y-2">
-                  {communityHunts.map((hunt) => (
-                    <div
-                      key={hunt.id}
-                      className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-border bg-surface/60 p-3"
-                    >
-                      <div className="min-w-0">
-                        <span className="block truncate text-sm font-semibold">
-                          {hunt.name}
-                        </span>
-                        <span className="block text-xs text-muted">
-                          {hunt.stats.slotCount} slot{hunt.stats.slotCount > 1 ? "s" : ""} ·{" "}
-                          {formatMoney(hunt.stats.totalWon, hunt.currency)} gagnés
-                        </span>
-                      </div>
-                      {linkCode ? (
-                        <Button
-                          size="sm"
-                          onClick={() => void handleClaim(hunt.id)}
-                        >
-                          <IconLink className="size-3.5" />
-                          Lier
-                        </Button>
-                      ) : (
-                        <Badge tone="neutral">Partagé</Badge>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Détail */}
@@ -604,15 +554,6 @@ export default function HuntApp() {
                       >
                         + Ajouter une slot
                       </Button>
-                      {!detail.ownerCode && linkCode && (
-                        <Button
-                          variant="secondary"
-                          onClick={() => void handleClaim(detail.id)}
-                        >
-                          <IconLink className="size-4" />
-                          Lier à mon code
-                        </Button>
-                      )}
                       <Button
                         variant="secondary"
                         onClick={() => {
