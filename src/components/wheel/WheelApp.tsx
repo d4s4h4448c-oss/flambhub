@@ -19,6 +19,7 @@ import {
   IconTrophy,
   IconWheel,
 } from "@/components/ui/Icons";
+import { flambFetch } from "@/lib/client";
 import type { EntryInput } from "@/lib/validation/schemas";
 
 interface Wheel {
@@ -86,7 +87,7 @@ export default function WheelApp() {
 
   const loadWheels = useCallback(async () => {
     try {
-      const res = await fetch("/api/wheels", { cache: "no-store" });
+      const res = await flambFetch("/api/wheels", { cache: "no-store" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Impossible de charger les roues.");
       const list: Wheel[] = data.wheels ?? [];
@@ -112,7 +113,7 @@ export default function WheelApp() {
 
   const loadHistory = useCallback(async (wheelId: string) => {
     try {
-      const res = await fetch(`/api/wheels/${wheelId}/history?limit=50`, {
+      const res = await flambFetch(`/api/wheels/${wheelId}/history?limit=50`, {
         cache: "no-store",
       });
       const data = await res.json();
@@ -161,7 +162,7 @@ export default function WheelApp() {
 
     const spinId = crypto.randomUUID();
     try {
-      const res = await fetch(`/api/wheels/${selectedWheel.id}/spin`, {
+      const res = await flambFetch(`/api/wheels/${selectedWheel.id}/spin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: spinId }),
@@ -225,7 +226,7 @@ export default function WheelApp() {
     setEliminating(true);
     setSpinError(null);
     try {
-      const res = await fetch(`/api/wheels/${selectedWheel.id}`, {
+      const res = await flambFetch(`/api/wheels/${selectedWheel.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import Alert from "@/components/ui/Alert";
 import { Input } from "@/components/ui/Form";
+import { flambFetch } from "@/lib/client";
 import { IconShuffle } from "@/components/ui/Icons";
 import type { EntryInput } from "@/lib/validation/schemas";
 
@@ -118,7 +119,7 @@ export default function WheelEditor({
 
     setSaving(true);
     try {
-      const res = await fetch(wheelId ? `/api/wheels/${wheelId}` : "/api/wheels", {
+      const res = await flambFetch(wheelId ? `/api/wheels/${wheelId}` : "/api/wheels", {
         method: wheelId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim(), entries: payload }),
@@ -144,7 +145,7 @@ export default function WheelEditor({
     setDeleting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/wheels/${wheelId}`, { method: "DELETE" });
+      const res = await flambFetch(`/api/wheels/${wheelId}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error ?? "Suppression impossible.");

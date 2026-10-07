@@ -12,6 +12,7 @@ const I = {
 const state = {
   url: "",
   linkCode: "",
+  adminToken: "",
   hunts: [],
   selectedId: null,
   detail: null,
@@ -21,6 +22,7 @@ async function api(path, options = {}) {
   if (!state.url) throw new Error("Configure l'URL du serveur (réglages).");
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
   if (state.linkCode) headers["x-flamb-code"] = state.linkCode.toUpperCase();
+  if (state.adminToken) headers["x-admin-token"] = state.adminToken;
   const res = await fetch(state.url + path, { ...options, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || `Erreur serveur (${res.status})`);
@@ -276,7 +278,12 @@ function setup() {
     const code = raw.replace(/[^A-Z0-9]/g, "").match(/[A-Z0-9]{4}/g)?.slice(0, 3).join("-") || "";
     state.url = url;
     state.linkCode = code;
-    await chrome.storage.local.set({ serverUrl: url, linkCode: code });
+    state.adminToken = $("adminToken").value.trim();
+    await chrome.storage.local.set({
+      serverUrl: url,
+      linkCode: code,
+      adminToken: state.adminToken,
+    });
     $("settings").classList.add("hidden");
     try {
       await loadHunts();
@@ -352,13 +359,15 @@ function setup() {
   });
 }
 
-chrome.storage.local.get(["serverUrl", "linkCode"], async (result) => {
+chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
   setup();
   if (result.serverUrl) {
     state.url = result.serverUrl;
     state.linkCode = result.linkCode || "";
+    state.adminToken = result.adminToken || "";
     $("serverUrl").value = result.serverUrl;
     $("linkCode").value = result.linkCode || "";
+    $("adminToken").value = result.adminToken || "";
     try {
       await loadHunts();
       if (state.hunts.length > 0) $("slotName").focus();

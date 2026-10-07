@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
+import AdminTokenField from "@/components/AdminTokenField";
 import HuntApp from "@/components/hunt/HuntApp";
 import { IconSlot } from "@/components/ui/Icons";
 
@@ -17,7 +18,10 @@ export default function BonusHuntPage() {
         title="Bonus Hunt"
         subtitle="Crée un hunt avec ton montant de départ, ajoute tes slots avec leur mise, collecte tes gains : profit, break even, providers et machines remarquables sont calculés côté serveur."
       />
-      <HuntApp />
+      <div className="space-y-6">
+        <AdminTokenField />
+        <HuntApp />
+      </div>
     </div>
   );
 }
