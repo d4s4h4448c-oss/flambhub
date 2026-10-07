@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { withErrorHandling } from "@/lib/api/errors";
 import { getOwnerCode } from "@/lib/api/code";
-import { assertCanManage } from "@/lib/auth/permissions";
 import { deleteHunt, getHunt, getHuntCharts, updateHunt } from "@/lib/services/hunts";
 import { updateHuntSchema } from "@/lib/validation/schemas";
 
@@ -16,7 +15,6 @@ export const GET = withErrorHandling(async (req, ctx) => {
 });
 
 export const PATCH = withErrorHandling(async (req, ctx) => {
-  await assertCanManage(req, "hunts.manage");
   const { id } = await ctx.params;
   const ownerCode = getOwnerCode(req);
   const input = updateHuntSchema.parse(await req.json());
@@ -25,7 +23,6 @@ export const PATCH = withErrorHandling(async (req, ctx) => {
 });
 
 export const DELETE = withErrorHandling(async (req, ctx) => {
-  await assertCanManage(req, "hunts.delete");
   const { id } = await ctx.params;
   const ownerCode = getOwnerCode(req);
   await deleteHunt(id, ownerCode);

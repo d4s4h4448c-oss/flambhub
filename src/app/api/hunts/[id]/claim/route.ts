@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { badRequest, withErrorHandling } from "@/lib/api/errors";
 import { getOwnerCode } from "@/lib/api/code";
-import { assertCanManage } from "@/lib/auth/permissions";
 import { claimHunt } from "@/lib/services/hunts";
 
 export const POST = withErrorHandling(async (req, ctx) => {
-  await assertCanManage(req, "hunts.manage");
   const { id } = await ctx.params;
   const ownerCode = getOwnerCode(req);
   if (!ownerCode) {
