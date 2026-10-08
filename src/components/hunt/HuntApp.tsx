@@ -701,6 +701,49 @@ export default function HuntApp() {
                   />
                 </div>
 
+                {/* Barre break even */}
+                {detail.stats.startingAmount > 0 && (
+                  <Card className="p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-muted">
+                        Progression vers le break even
+                      </span>
+                      <span className="font-display text-lg font-bold text-foreground">
+                        {Math.round(
+                          (detail.stats.totalWon / detail.stats.startingAmount) * 100,
+                        )}
+                        %
+                      </span>
+                    </div>
+                    <div className="mt-2.5 h-3 w-full overflow-hidden rounded-full bg-surface-3">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-700"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            (detail.stats.totalWon / detail.stats.startingAmount) * 100,
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-xs text-muted">
+                      <span>{formatMoney(detail.stats.totalWon, detail.currency)} gagnés</span>
+                      <span>
+                        Objectif {formatMoney(detail.stats.startingAmount, detail.currency)}
+                      </span>
+                    </div>
+                    <p
+                      className={`mt-2 text-sm font-semibold ${
+                        detail.stats.profit >= 0 ? "text-success" : "text-rose"
+                      }`}
+                    >
+                      {detail.stats.profit >= 0
+                        ? `Break even atteint — tu es à +${formatMoney(detail.stats.profit, detail.currency)}`
+                        : `Il te manque ${formatMoney(Math.abs(detail.stats.profit), detail.currency)} pour atteindre le break even`}
+                    </p>
+                  </Card>
+                )}
+
                 {/* Remarquables */}
                 <Card className="p-5">
                   <h4 className="font-display mb-3 flex items-center gap-2 text-lg font-bold">
