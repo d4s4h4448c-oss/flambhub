@@ -25,7 +25,9 @@
     padding: 10px;
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
     box-sizing: border-box;
   }
   .fhb-root * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,7 +53,7 @@
   .fhb-header-right { display: flex; align-items: center; gap: 5px; flex: 1; justify-content: flex-end; }
   input, select {
     width: 100%; background: var(--surface-2); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--fg); padding: 8px 10px; font-size: 12.5px; outline: none;
+    border-radius: 10px; color: var(--fg); padding: 9px 11px; font-size: 13px; outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   input::placeholder { color: var(--muted); opacity: 0.7; }
@@ -149,7 +151,7 @@
   .mi-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .mi-count { font-size: 10px; font-weight: 700; color: var(--muted); background: var(--surface-3); border-radius: 999px; padding: 1.5px 7px; flex: 0 0 auto; }
   .menu-item.active .mi-count { background: rgba(59,130,246,0.25); color: var(--primary-strong); }
-  .slots { list-style: none; display: flex; flex-direction: column; gap: 5px; flex: 1; overflow-y: auto; }
+  .slots { list-style: none; display: flex; flex-direction: column; gap: 5px; flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 4px; }
   .slots-empty {
     text-align: center; color: var(--muted); font-size: 11.5px; padding: 18px 0;
     border: 1px dashed var(--border-strong); border-radius: 12px; margin-top: 2px;
@@ -199,13 +201,13 @@
   .fhb-btn svg { width: 22px; height: 22px; display: block; }
   .fhb-panel {
     position: fixed; top: 58px; right: 10px; z-index: 2147483646;
-    width: 360px; height: min(560px, calc(100vh - 70px));
+    width: 380px; height: min(600px, calc(100vh - 70px));
     border: 1px solid rgba(42,63,95,0.9); border-radius: 14px;
     overflow: hidden; background: #05070c;
     box-shadow: 0 18px 50px rgba(0,0,0,0.6);
     display: none;
   }
-  .fhb-panel.open { display: block; }
+  .fhb-panel.open { display: flex; flex-direction: column; }
   `;
 
   const ICONS = {
