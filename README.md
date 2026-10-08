@@ -63,12 +63,12 @@ Voir `.env.example` :
 | `npm run db:migrate`  | Applique les migrations à la base             |
 | `npm run lint`        | ESLint                                        |
 
-## Extension Chrome (panneau latéral compact Bonus Hunt)
+## Extension Chrome (encoche flottante Bonus Hunt)
 
-L'extension ouvre un **panneau latéral** sur le bord droit du navigateur : il
-ne se ferme jamais (même quand tu cliques dans ton casino), ta page reste
-visible et utilisable, et tu peux le redimensionner ou l'épingler (📌) pour le
-retrouver sur tous les onglets.
+L'extension injecte une **petite encoche flottante en haut à droite de toutes
+les pages** (y compris les casinos). Un clic ouvre le panneau juste à côté,
+directement sur la page : tu peux ajouter et collecter tes bonus **sans jamais
+quitter ton casino**, et cliquer sur la page ne le ferme pas.
 
 ### Installer (mode développeur)
 
@@ -76,10 +76,11 @@ retrouver sur tous les onglets.
 2. Active **Mode développeur** (en haut à droite)
 3. **Charger l'extension non empaquetée** → sélectionne le dossier `extension/`
 4. Épingle l'extension (icône puzzle → 📌)
-5. Clique l'icône FlambHub → le panneau s'ouvre à droite
+5. L'encoche apparaît sur toutes les pages — clique dessus pour ouvrir le
+   panneau (un clic sur l'icône de l'extension le masque/rouvre aussi)
 6. Première utilisation : réglages → URL du serveur + code de liaison
+   - En ligne : `https://flambhub.vercel.app`
    - Local : `http://localhost:3007`
-   - En ligne : `https://ton-site.vercel.app`
 
 ### Fonctionnement
 

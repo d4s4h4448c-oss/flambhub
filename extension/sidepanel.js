@@ -257,6 +257,12 @@ async function deleteSlot(slot) {
 /* ---------- Init ---------- */
 
 function setup() {
+  $("closeBtn").addEventListener("click", () => {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: "flambhub-close" }, "*");
+    }
+  });
+
   $("refreshBtn").addEventListener("click", () => {
     if (!state.url) return;
     loadHunts().catch((err) => showError(err.message));
