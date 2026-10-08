@@ -604,9 +604,16 @@
   }
 
   /* ============ Toggle ============ */
+  const togglePanel = (force) => {
+    panel.classList.toggle("open", force !== undefined ? force : undefined);
+  };
   button.addEventListener("click", (e) => {
     e.stopPropagation();
+    e.preventDefault();
     panel.classList.toggle("open");
+  });
+  button.addEventListener("pointerup", (e) => {
+    e.stopPropagation();
   });
 
   chrome.runtime.onMessage.addListener((msg) => {
@@ -616,25 +623,41 @@
   });
 
   /* ============ Init ============ */
-  setup();
+  try {
+    setup();
+    console.log("[FlambHub] widget injecté sur", location.hostname);
+  } catch (err) {
+    console.error("[FlambHub] erreur d'initialisation :", err);
+    root.innerHTML = "";
+    const errBox = document.createElement("div");
+    errBox.className = "alert";
+    errBox.style.margin = "10px";
+    errBox.textContent = "Erreur FlambHub : " + (err && err.message ? err.message : err);
+    root.appendChild(errBox);
+    panel.classList.add("open");
+    return;
+  }
+
   chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
-    if (result.serverUrl) {
-      state.url = result.serverUrl;
-      state.linkCode = result.linkCode || "";
-      state.adminToken = result.adminToken || "";
-      $("serverUrl").value = result.serverUrl;
-      $("linkCode").value = result.linkCode || "";
-      $("adminToken").value = result.adminToken || "";
-      try {
+    try {
+      if (result.serverUrl) {
+        state.url = result.serverUrl;
+        state.linkCode = result.linkCode || "";
+        state.adminToken = result.adminToken || "";
+        $("serverUrl").value = result.serverUrl;
+        $("linkCode").value = result.linkCode || "";
+        $("adminToken").value = result.adminToken || "";
         await loadHunts();
         if (state.hunts.length > 0) $("slotName").focus();
-      } catch (err) {
-        showError(err.message);
+      } else {
         $("settings").classList.remove("hidden");
+        $("serverUrl").focus();
+        panel.classList.add("open");
       }
-    } else {
+    } catch (err) {
+      showError(err.message);
       $("settings").classList.remove("hidden");
-      $("serverUrl").focus();
+      panel.classList.add("open");
     }
   });
 })();
