@@ -557,8 +557,11 @@
     $("startOpen").classList.toggle("hidden", !hasHunts || !state.url);
     const openingActive = !$("openMode").classList.contains("hidden");
     if (openingActive) {
-      if (state.detail) renderOpening();
-      return;
+      if (state.detail) {
+        renderOpening();
+        return;
+      }
+      $("openMode").classList.add("hidden");
     }
     $("addForm").classList.toggle("hidden", !hasHunts || !state.url);
     $("profit").classList.toggle("hidden", !state.detail);
@@ -574,7 +577,12 @@
       </button></li>`)
       .join("");
 
-    if (state.detail) renderDetail();
+    if (state.detail) {
+      renderDetail();
+    } else {
+      // Plus de hunt sélectionné : ne pas laisser traîner d'anciens bonus.
+      $("slotList").innerHTML = "";
+    }
   }
 
   function renderDetail() {
