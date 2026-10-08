@@ -65,7 +65,6 @@ export default function SlotForm({
   editing: HuntSlot | null;
 }) {
   const [slotName, setSlotName] = useState(editing?.slotName ?? "");
-  const [provider, setProvider] = useState(editing?.provider ?? "");
   const [stake, setStake] = useState(editing ? String(editing.stake) : "");
   const [player, setPlayer] = useState(editing?.player ?? "");
   const [status, setStatus] = useState<SlotStatus>(editing?.status ?? "pending");
@@ -81,7 +80,6 @@ export default function SlotForm({
 
   const pickSuggestion = (slot: CatalogSlot) => {
     setSlotName(slot.name);
-    setProvider(slot.provider);
     setShowSuggestions(false);
   };
 
@@ -104,7 +102,7 @@ export default function SlotForm({
 
     const body = {
       slotName: slotName.trim(),
-      provider: provider.trim(),
+      provider: "",
       stake: stakeNum,
       player: player.trim(),
       status,
@@ -177,14 +175,6 @@ export default function SlotForm({
             </ul>
           )}
         </div>
-
-        <Input
-          label="Provider"
-          placeholder="Ex : Pragmatic Play"
-          value={provider}
-          onChange={(e) => setProvider(e.target.value)}
-          maxLength={120}
-        />
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Input

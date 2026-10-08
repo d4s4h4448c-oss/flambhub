@@ -629,29 +629,6 @@ export default function HuntApp() {
                   />
                 </div>
 
-                {/* Providers */}
-                <Card className="p-5">
-                  <h4 className="font-display mb-3 text-lg font-bold">Providers</h4>
-                  {detail.stats.providers.length === 0 ? (
-                    <p className="text-sm text-muted">Aucune donnée disponible</p>
-                  ) : (
-                    <ul className="divide-y divide-border/60">
-                      {detail.stats.providers.map((p) => (
-                        <li key={p.provider} className="flex items-center justify-between gap-3 py-2.5 text-sm">
-                          <span className="font-medium">{p.provider}</span>
-                          <span className="text-muted">
-                            {p.count} slot{p.count > 1 ? "s" : ""} · mise{" "}
-                            {formatMoney(p.totalStake, detail!.currency)} · gagné{" "}
-                            <span className="font-semibold text-success">
-                              {formatMoney(p.totalWon, detail!.currency)}
-                            </span>
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </Card>
-
                 {/* Remarquables */}
                 <Card className="p-5">
                   <h4 className="font-display mb-3 flex items-center gap-2 text-lg font-bold">
@@ -667,12 +644,7 @@ export default function HuntApp() {
                           key={`${r.slotName}-${r.multiplier}`}
                           className="flex items-center justify-between gap-3 py-2.5 text-sm"
                         >
-                          <span className="font-medium">
-                            {r.slotName}
-                            {r.provider && (
-                              <span className="ml-2 text-xs text-muted">{r.provider}</span>
-                            )}
-                          </span>
+                          <span className="font-medium">{r.slotName}</span>
                           <span>
                             <Badge tone="flame">{r.multiplier.toFixed(0)}x</Badge>{" "}
                             <span className="ml-1 font-semibold text-success">
@@ -751,11 +723,6 @@ export default function HuntApp() {
                                     )}
                                     {slot.slotName}
                                   </span>
-                                  {slot.provider && (
-                                    <span className="ml-2 text-xs text-muted">
-                                      {slot.provider}
-                                    </span>
-                                  )}
                                 </td>
                                 <td className="px-4 py-3 text-muted">{slot.player || "—"}</td>
                                 <td className="px-4 py-3 text-right">

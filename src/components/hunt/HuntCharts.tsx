@@ -134,20 +134,6 @@ export default function HuntCharts({
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
-
-      <ChartCard title="Répartition par provider" empty={data.providerBreakdown.length === 0}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data.providerBreakdown} layout="vertical" margin={{ top: 4, right: 12, left: 8, bottom: 0 }}>
-            <CartesianGrid stroke="#1c2a3f" strokeDasharray="3 3" />
-            <XAxis type="number" stroke="#8fa3bd" tick={axisStyle} />
-            <YAxis type="category" dataKey="provider" stroke="#8fa3bd" tick={axisStyle} width={110} />
-            <Tooltip contentStyle={tooltipStyle} />
-            <Legend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="mise" name="Mise totale" fill="#3b82f6" radius={[0, 4, 4, 0]} />
-            <Bar dataKey="gagne" name="Total gagné" fill="#22d3ee" radius={[0, 4, 4, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartCard>
     </div>
   );
 }

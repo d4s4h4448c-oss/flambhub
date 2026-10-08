@@ -413,7 +413,11 @@
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: "flambhub-api", path, options }, (resp) => {
         if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
+          reject(
+            new Error(
+              "Extension mise à jour : recharge la page (Cmd + R) puis réessaie.",
+            ),
+          );
           return;
         }
         if (!resp) {
