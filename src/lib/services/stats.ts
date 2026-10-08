@@ -75,16 +75,17 @@ export function computeHuntStats(
 
   const breakEvenFixe =
     totalStake > 0 ? round2(startingAmount / totalStake) : null;
+  // Jamais négatif : si le break even est déjà dépassé, il vaut 0.
   const breakEvenEvolutif =
     remainingStake > 0
-      ? round2((startingAmount - totalWon) / remainingStake)
+      ? Math.max(0, round2((startingAmount - totalWon) / remainingStake))
       : null;
 
-  let bountyCount = 0;
+  const bountyCount = slots.filter((s) => s.isBounty).length;
+
   let biggestBonus: HuntStats["biggestBonus"] = null;
   let smallestBonus: HuntStats["smallestBonus"] = null;
   for (const s of collected) {
-    if (s.isBounty) bountyCount += 1;
     if (!biggestBonus || s.winAmount > biggestBonus.value) {
       biggestBonus = { value: s.winAmount, slotName: s.slotName };
     }
