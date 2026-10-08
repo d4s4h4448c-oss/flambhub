@@ -777,9 +777,6 @@
   }
 
   /* ============ Toggle ============ */
-  const togglePanel = (force) => {
-    panel.classList.toggle("open", force !== undefined ? force : undefined);
-  };
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     e.preventDefault();

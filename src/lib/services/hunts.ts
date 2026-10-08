@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { badRequest, notFound } from "@/lib/api/errors";
+import { notFound } from "@/lib/api/errors";
 import { db } from "@/lib/db";
 import { bonusHunts, huntSlots, type HuntSlot } from "@/lib/db/schema";
 import type { Currency } from "@/lib/data/currencies";
