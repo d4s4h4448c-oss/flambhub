@@ -345,15 +345,27 @@
     $("error").classList.add("hidden");
   }
 
-  async function api(path, options = {}) {
-    if (!state.url) throw new Error("Configure l'URL du serveur (réglages).");
-    const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-    if (state.linkCode) headers["x-flamb-code"] = state.linkCode.toUpperCase();
-    if (state.adminToken) headers["x-admin-token"] = state.adminToken;
-    const res = await fetch(state.url + path, { ...options, headers });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || `Erreur serveur (${res.status})`);
-    return data;
+  function api(path, options = {}) {
+    // Les requêtes passent par le service worker : elles échappent à la CSP
+    // des sites visités (Stake, etc.).
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: "flambhub-api", path, options }, (resp) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        if (!resp) {
+          reject(new Error("Pas de réponse de l'extension."));
+          return;
+        }
+        if (!resp.ok) {
+          const serverError = resp.data && resp.data.error ? resp.data.error : null;
+          reject(new Error(serverError || resp.error || `Erreur serveur (${resp.status})`));
+          return;
+        }
+        resolve(resp.data);
+      });
+    });
   }
 
   function render() {
