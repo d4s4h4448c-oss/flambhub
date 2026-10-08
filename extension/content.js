@@ -333,7 +333,6 @@
         <input id="slotStake" type="number" min="0" step="0.01" placeholder="Mise" required />
       </div>
       <div class="form-row">
-        <input id="slotGain" type="number" min="0" step="0.01" placeholder="Gain (optionnel)" />
         <label class="bounty-toggle" id="bountyToggle" title="Marquer comme Bounty">
           <input type="checkbox" id="slotBounty" />
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.5 4 6 7 6 10.5a6 6 0 0 1-12 0C6 10 8.5 7 12 3Z"/><path d="M12 10.5c1.8 1.8 2.7 3.4 2.7 4.8A2.7 2.7 0 0 1 12 18a2.7 2.7 0 0 1-2.7-2.7c0-1.4.9-3 2.7-4.8Z"/></svg>
@@ -805,20 +804,17 @@
       const name = $("slotName").value.trim();
       const stake = Number($("slotStake").value.replace(",", "."));
       if (!name || !(stake > 0)) return;
-      const gain = Number($("slotGain").value.replace(",", "."));
       const isBounty = $("slotBounty").checked;
       const body = {
         slotName: name,
         provider: "",
         stake,
         isBounty,
-        ...(gain > 0 ? { status: "collected", winAmount: gain } : {}),
       };
       try {
         await api(`/api/hunts/${state.selectedId}/slots`, { method: "POST", body: JSON.stringify(body) });
         $("slotName").value = "";
         $("slotStake").value = "";
-        $("slotGain").value = "";
         $("slotBounty").checked = false;
         $("bountyToggle").classList.remove("on");
         $("slotName").focus();
