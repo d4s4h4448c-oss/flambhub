@@ -688,11 +688,13 @@ export default function HuntApp() {
                     icon={<IconTarget />}
                     label="Break Even Fixe"
                     value={formatMultiplier(detail.stats.breakEvenFixe)}
+                    sub="Départ ÷ total des mises"
                   />
                   <SummaryCard
                     icon={<IconActivity />}
                     label="Break Even Évolutif"
                     value={formatMultiplier(detail.stats.breakEvenEvolutif)}
+                    sub="Reste à gagner ÷ mises restantes"
                   />
                   <SummaryCard
                     icon={<IconFlame className="text-[#fb923c]" />}
