@@ -194,6 +194,16 @@
     border-radius: 999px;
     padding: 2.5px 8px;
   }
+  .mult-chip {
+    flex: 0 0 auto;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--cyan);
+    background: rgba(34,211,238,0.12);
+    border: 1px solid rgba(34,211,238,0.3);
+    border-radius: 999px;
+    padding: 2.5px 8px;
+  }
   .badge {
     display: inline-flex;
     align-items: center;
@@ -578,8 +588,8 @@
         <span class="pvalue ${profit >= 0 ? "good" : "bad"}">${profit >= 0 ? "+" : ""}${fmt(profit, cur)}</span>
       </div>
       <div class="profit-side">
-        <span>Gagné ${fmt(detail.stats.totalWon, cur)}</span>
-        <span>${detail.stats.collectedCount}/${detail.stats.slotCount} collectées · ${detail.stats.bountyCount} bounty</span>
+        <span>Gagné ${fmt(detail.stats.totalWon, cur)} · Moy ${detail.stats.averageMultiplier != null ? detail.stats.averageMultiplier.toFixed(1) + "x" : "—"}</span>
+        <span>${detail.stats.collectedCount}/${detail.stats.slotCount} collectées · ${detail.stats.bountyCount} bounty · Tot ${detail.stats.totalMultiplier != null ? detail.stats.totalMultiplier.toFixed(1) + "x" : "—"}</span>
       </div>`;
 
     const seen = new Set();
@@ -621,6 +631,11 @@
       <span class="status-dot ${statusClass}"></span>
       <span class="name">${slot.isBounty ? ICONS.flame : ""}${escapeHtml(slot.slotName)}</span>
       <span class="stake-chip">${fmt(slot.stake, currency)}</span>
+      ${
+        slot.status === "collected" && slot.stake > 0
+          ? `<span class="mult-chip">${(slot.winAmount / slot.stake).toFixed(1)}x</span>`
+          : ""
+      }
       <span class="badge ${badgeClass}">${badgeText}</span>
       <span class="actions">${action}</span>`;
 

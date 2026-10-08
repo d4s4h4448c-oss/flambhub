@@ -36,6 +36,10 @@ export interface HuntStats {
   totalWon: number;
   profit: number;
   rtp: number | null;
+  averageMultiplier: number | null;
+  totalMultiplier: number | null;
+  biggestBonus: { value: number; slotName: string } | null;
+  smallestBonus: { value: number; slotName: string } | null;
   breakEvenFixe: number | null;
   breakEvenEvolutif: number | null;
   remarquables: RemarkableSlot[];

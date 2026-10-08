@@ -17,6 +17,10 @@ export interface HuntStats {
   totalWon: number;
   profit: number;
   rtp: number | null;
+  averageMultiplier: number | null;
+  totalMultiplier: number | null;
+  biggestBonus: { value: number; slotName: string } | null;
+  smallestBonus: { value: number; slotName: string } | null;
   breakEvenFixe: number | null;
   breakEvenEvolutif: number | null;
   remarquables: RemarkableSlot[];
@@ -77,9 +81,28 @@ export function computeHuntStats(
       : null;
 
   let bountyCount = 0;
+  let biggestBonus: HuntStats["biggestBonus"] = null;
+  let smallestBonus: HuntStats["smallestBonus"] = null;
   for (const s of collected) {
     if (s.isBounty) bountyCount += 1;
+    if (!biggestBonus || s.winAmount > biggestBonus.value) {
+      biggestBonus = { value: s.winAmount, slotName: s.slotName };
+    }
+    if (!smallestBonus || s.winAmount < smallestBonus.value) {
+      smallestBonus = { value: s.winAmount, slotName: s.slotName };
+    }
   }
+
+  const withStake = collected.filter((s) => s.stake > 0);
+  const averageMultiplier =
+    withStake.length > 0
+      ? round2(
+          withStake.reduce((sum, s) => sum + slotMultiplier(s), 0) /
+            withStake.length,
+        )
+      : null;
+  const totalMultiplier =
+    totalStake > 0 ? round2(totalWon / totalStake) : null;
 
   const remarquables: RemarkableSlot[] = collected
     .filter((s) => slotMultiplier(s) >= REMARKABLE_MULTIPLIER)
@@ -101,6 +124,10 @@ export function computeHuntStats(
     totalWon,
     profit: round2(totalWon - startingAmount),
     rtp: totalStake > 0 ? round2((totalWon / totalStake) * 100) : null,
+    averageMultiplier,
+    totalMultiplier,
+    biggestBonus,
+    smallestBonus,
     breakEvenFixe,
     breakEvenEvolutif,
     remarquables,

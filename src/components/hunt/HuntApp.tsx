@@ -20,12 +20,15 @@ import {
   IconCoins,
   IconCopy,
   IconFlame,
+  IconGem,
   IconLink,
   IconPencil,
   IconSlot,
+  IconStar,
   IconTarget,
   IconTrash,
   IconTrendUp,
+  IconTrophy,
   IconWallet,
 } from "@/components/ui/Icons";
 import type { HuntChartData, HuntDetail, HuntSlot, HuntSummary, SlotStatus } from "@/lib/types";
@@ -636,6 +639,44 @@ export default function HuntApp() {
                           ? "good"
                           : "bad"
                     }
+                  />
+                  <SummaryCard
+                    icon={<IconGem />}
+                    label="Multiplicateur total"
+                    value={
+                      detail.stats.totalMultiplier === null
+                        ? "—"
+                        : `${detail.stats.totalMultiplier.toFixed(2)}x`
+                    }
+                  />
+                  <SummaryCard
+                    icon={<IconStar />}
+                    label="Multiplicateur moyen"
+                    value={
+                      detail.stats.averageMultiplier === null
+                        ? "—"
+                        : `${detail.stats.averageMultiplier.toFixed(2)}x`
+                    }
+                  />
+                  <SummaryCard
+                    icon={<IconTrophy />}
+                    label="Plus gros bonus"
+                    value={
+                      detail.stats.biggestBonus
+                        ? formatMoney(detail.stats.biggestBonus.value, detail.currency)
+                        : "—"
+                    }
+                    sub={detail.stats.biggestBonus?.slotName}
+                  />
+                  <SummaryCard
+                    icon={<IconCoins />}
+                    label="Plus petit bonus"
+                    value={
+                      detail.stats.smallestBonus
+                        ? formatMoney(detail.stats.smallestBonus.value, detail.currency)
+                        : "—"
+                    }
+                    sub={detail.stats.smallestBonus?.slotName}
                   />
                   <SummaryCard
                     icon={<IconSlot />}
