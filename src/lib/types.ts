@@ -19,16 +19,8 @@ export interface HuntSlot {
   updatedAt: string;
 }
 
-export interface ProviderStat {
-  provider: string;
-  count: number;
-  totalStake: number;
-  totalWon: number;
-}
-
 export interface RemarkableSlot {
   slotName: string;
-  provider: string;
   stake: number;
   winAmount: number;
   multiplier: number;
@@ -46,7 +38,6 @@ export interface HuntStats {
   rtp: number | null;
   breakEvenFixe: number | null;
   breakEvenEvolutif: number | null;
-  providers: ProviderStat[];
   remarquables: RemarkableSlot[];
   bountyCount: number;
 }
@@ -56,7 +47,6 @@ export interface HuntChartData {
   stakeVsWin: Array<{ index: number; mise: number; gain: number }>;
   multiplierDistribution: Array<{ bucket: string; count: number }>;
   topSlots: Array<{ slotName: string; winAmount: number; multiplier: number }>;
-  providerBreakdown: Array<{ provider: string; mise: number; gagne: number }>;
 }
 
 export interface HuntDetail {

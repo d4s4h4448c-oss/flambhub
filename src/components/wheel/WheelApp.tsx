@@ -139,6 +139,36 @@ export default function WheelApp() {
     setEliminated([]);
   }, []);
 
+  // Synchronisation temps réel : roues + historique, recharge silencieuse.
+  const refreshSilently = useCallback(async () => {
+    try {
+      const res = await flambFetch("/api/wheels", { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok) return;
+      setWheels(data.wheels ?? []);
+      if (selectedId) {
+        const hres = await flambFetch(`/api/wheels/${selectedId}/history?limit=50`, {
+          cache: "no-store",
+        });
+        const hdata = await hres.json();
+        if (hres.ok) setHistory(hdata.history ?? []);
+      }
+    } catch {
+      /* silencieux */
+    }
+  }, [selectedId]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (editorOpen || spinning) return;
+      const el = document.activeElement;
+      if (el && ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) return;
+      void refreshSilently();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [refreshSilently, editorOpen, spinning]);
+
   const finishSpin = useCallback(() => {
     if (finishTimerRef.current) {
       clearTimeout(finishTimerRef.current);

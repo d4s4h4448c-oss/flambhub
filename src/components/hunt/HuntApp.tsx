@@ -180,6 +180,37 @@ export default function HuntApp() {
     await Promise.all([loadDetail(huntId), loadHunts()]);
   }, [loadDetail, loadHunts]);
 
+  // Synchronisation temps réel avec l'extension : recharge silencieuse.
+  const refreshSilently = useCallback(async () => {
+    try {
+      const res = await flambFetch("/api/hunts", { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok) return;
+      setHunts(data.hunts ?? []);
+      if (selectedId) {
+        const dres = await flambFetch(`/api/hunts/${selectedId}`, { cache: "no-store" });
+        const ddata = await dres.json();
+        if (dres.ok) {
+          setDetail(ddata.hunt);
+          setCharts(ddata.charts);
+        }
+      }
+    } catch {
+      /* silencieux */
+    }
+  }, [selectedId]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (settingsOpen || slotFormOpen) return;
+      const el = document.activeElement;
+      if (el && ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) return;
+      void refreshSilently();
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [refreshSilently, settingsOpen, slotFormOpen]);
+
   const applyNewCode = useCallback(() => {
     const code = newClientCode();
     setClientCode(code);

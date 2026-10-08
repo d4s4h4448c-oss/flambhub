@@ -1,15 +1,7 @@
 import type { HuntSlot } from "@/lib/db/schema";
 
-export interface ProviderStat {
-  provider: string;
-  count: number;
-  totalStake: number;
-  totalWon: number;
-}
-
 export interface RemarkableSlot {
   slotName: string;
-  provider: string;
   stake: number;
   winAmount: number;
   multiplier: number;
@@ -27,7 +19,6 @@ export interface HuntStats {
   rtp: number | null;
   breakEvenFixe: number | null;
   breakEvenEvolutif: number | null;
-  providers: ProviderStat[];
   remarquables: RemarkableSlot[];
   bountyCount: number;
 }
@@ -37,7 +28,6 @@ export interface HuntChartData {
   stakeVsWin: Array<{ index: number; mise: number; gain: number }>;
   multiplierDistribution: Array<{ bucket: string; count: number }>;
   topSlots: Array<{ slotName: string; winAmount: number; multiplier: number }>;
-  providerBreakdown: Array<{ provider: string; mise: number; gagne: number }>;
 }
 
 const MULTIPLIER_BUCKETS: Array<{ label: string; min: number; max: number }> = [
@@ -86,31 +76,15 @@ export function computeHuntStats(
       ? round2((startingAmount - totalWon) / remainingStake)
       : null;
 
-  const providerMap = new Map<string, ProviderStat>();
-  for (const slot of slots) {
-    const key = slot.provider || "Autre";
-    const current = providerMap.get(key) ?? {
-      provider: key,
-      count: 0,
-      totalStake: 0,
-      totalWon: 0,
-    };
-    current.count += 1;
-    current.totalStake = round2(current.totalStake + slot.stake);
-    current.totalWon = round2(current.totalWon + slot.winAmount);
-    providerMap.set(key, current);
+  let bountyCount = 0;
+  for (const s of collected) {
+    if (s.isBounty) bountyCount += 1;
   }
-  const providers = [...providerMap.values()].sort(
-    (a, b) => b.totalWon - a.totalWon || b.count - a.count,
-  );
-
-  const bountyCount = slots.filter((s) => s.isBounty).length;
 
   const remarquables: RemarkableSlot[] = collected
     .filter((s) => slotMultiplier(s) >= REMARKABLE_MULTIPLIER)
     .map((s) => ({
       slotName: s.slotName,
-      provider: s.provider,
       stake: s.stake,
       winAmount: s.winAmount,
       multiplier: slotMultiplier(s),
@@ -129,7 +103,6 @@ export function computeHuntStats(
     rtp: totalStake > 0 ? round2((totalWon / totalStake) * 100) : null,
     breakEvenFixe,
     breakEvenEvolutif,
-    providers,
     remarquables,
     bountyCount,
   };
@@ -180,25 +153,10 @@ export function computeHuntChartData(
     .sort((a, b) => b.winAmount - a.winAmount)
     .slice(0, 8);
 
-  const providerMap = new Map<string, { mise: number; gagne: number }>();
-  for (const slot of slots) {
-    const key = slot.provider || "Autre";
-    const current = providerMap.get(key) ?? { mise: 0, gagne: 0 };
-    current.mise = round2(current.mise + slot.stake);
-    current.gagne = round2(
-      current.gagne + (slot.status === "collected" ? slot.winAmount : 0),
-    );
-    providerMap.set(key, current);
-  }
-  const providerBreakdown = [...providerMap.entries()]
-    .map(([provider, value]) => ({ provider, ...value }))
-    .sort((a, b) => b.gagne - a.gagne);
-
   return {
     profitEvolution,
     stakeVsWin,
     multiplierDistribution,
     topSlots,
-    providerBreakdown,
   };
 }

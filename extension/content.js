@@ -636,7 +636,7 @@
     }
   }
 
-  const opening = { queue: [], index: 0 };
+  const opening = { queue: [], index: 0, currentRenderedId: null };
 
   function currentOpenSlot() {
     if (!state.detail) return null;
@@ -649,6 +649,7 @@
     if (remaining.length === 0) return;
     opening.queue = remaining.map((s) => s.id);
     opening.index = 0;
+    opening.currentRenderedId = null;
     $("openMode").classList.remove("hidden");
     $("huntBar").classList.add("hidden");
     $("startOpen").classList.add("hidden");
@@ -666,15 +667,19 @@
     $("openProgress").textContent = `${done}/${total}`;
     const slot = currentOpenSlot();
     if (!slot) {
+      opening.currentRenderedId = null;
       $("openDone").classList.remove("hidden");
       return;
     }
     $("openDone").classList.add("hidden");
-    $("openName").textContent = slot.slotName;
-    $("openMeta").textContent = `Mise ${fmt(slot.stake, detail.currency)}${slot.player ? " · " + slot.player : ""}`;
-    $("openBounty").classList.toggle("hidden", !slot.isBounty);
-    $("openResult").value = "";
-    $("openResult").focus();
+    if (opening.currentRenderedId !== slot.id) {
+      opening.currentRenderedId = slot.id;
+      $("openName").textContent = slot.slotName;
+      $("openMeta").textContent = `Mise ${fmt(slot.stake, detail.currency)}${slot.player ? " · " + slot.player : ""}`;
+      $("openBounty").classList.toggle("hidden", !slot.isBounty);
+      $("openResult").value = "";
+      $("openResult").focus();
+    }
   }
 
   async function validateOpen() {
@@ -861,7 +866,18 @@
   }
 
   try {
-    chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
+    // Synchronisation temps réel : recharge silencieuse toutes les 4 s.
+  setInterval(() => {
+    if (!panel.classList.contains("open") || !state.url) return;
+    if (document.visibilityState !== "visible") return;
+    const el = document.activeElement;
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA") && root.contains(el)) {
+      return;
+    }
+    loadHunts().catch(() => {});
+  }, 4000);
+
+  chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
     try {
       if (result.serverUrl) {
         state.url = result.serverUrl;
