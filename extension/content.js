@@ -323,7 +323,7 @@
   document.documentElement.appendChild(host);
 
   /* ============ Logique ============ */
-  const $ = (id) => root.getElementById(id);
+  const $ = (id) => shadow.getElementById(id);
 
   const state = { url: "", linkCode: "", adminToken: "", hunts: [], selectedId: null, detail: null };
 
