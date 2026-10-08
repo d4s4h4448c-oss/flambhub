@@ -118,14 +118,28 @@
   .form-row input:first-child { flex: 2.2; min-width: 0; }
   .form-row input:nth-child(2) { flex: 1; min-width: 0; }
   .bounty-toggle {
-    display: inline-flex; align-items: center; gap: 5px; padding: 7px 10px;
-    border: 1px solid var(--border); background: var(--surface-2); border-radius: 10px;
-    cursor: pointer; font-size: 11px; font-weight: 700; color: var(--muted);
-    user-select: none; transition: color 0.15s, border-color 0.15s, background 0.15s; flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 13px;
+    border: 1px dashed rgba(251,146,60,0.45);
+    background: rgba(251,146,60,0.06);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fb923c;
+    user-select: none;
+    transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    flex: 0 0 auto;
   }
   .bounty-toggle input { display: none; }
-  .bounty-toggle:hover { border-color: var(--border-strong); }
-  .bounty-toggle.on { color: #fb923c; border-color: rgba(251,146,60,0.45); background: rgba(251,146,60,0.12); }
+  .bounty-toggle:hover { border-color: rgba(251,146,60,0.7); }
+  .bounty-toggle.on {
+    color: #fdba74;
+    border-style: solid;
+    border-color: rgba(251,146,60,0.65);
+    background: linear-gradient(135deg, rgba(251,146,60,0.28), rgba(244,63,94,0.14));
+    box-shadow: 0 0 14px rgba(251,146,60,0.25);
+  }
   .hunt-bar { position: relative; margin-bottom: 8px; }
   .hunt-btn {
     width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -158,8 +172,8 @@
   }
   .slot {
     display: flex; align-items: center; gap: 7px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 11px;
-    padding: 7px 9px; transition: border-color 0.15s, background 0.15s;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 8px 10px; transition: border-color 0.15s, background 0.15s;
   }
   .slot:hover { border-color: var(--border-strong); background: var(--surface-2); }
   .status-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
@@ -171,8 +185,32 @@
     display: inline-flex; align-items: center; gap: 3px;
   }
   .bounty-mark { width: 11px; height: 11px; color: #fb923c; flex: 0 0 auto; }
-  .slot .stake { color: var(--muted); font-size: 10.5px; flex: 0 0 auto; }
-  .badge { font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 2px 7px; flex: 0 0 auto; }
+  .stake-chip {
+    flex: 0 0 auto;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--surface-3);
+    border-radius: 999px;
+    padding: 2.5px 8px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9.5px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2.5px 8px;
+    flex: 0 0 auto;
+  }
+  .badge::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
   .badge.pending { background: rgba(100,116,139,0.16); color: var(--muted); }
   .badge.progress { background: rgba(59,130,246,0.16); color: var(--primary-strong); }
   .badge.collected { background: rgba(52,211,153,0.16); color: var(--success); }
@@ -189,10 +227,32 @@
   .slot .gain-input { display: flex; gap: 4px; align-items: center; flex: 1; min-width: 0; }
   .slot .gain-input input { padding: 6px 8px; font-size: 12px; }
   .hunt-fini {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-bottom: 8px;
-    background: linear-gradient(180deg, #22d3ee, #0891b2) !important;
-    box-shadow: 0 2px 14px rgba(34,211,238,0.4);
-    font-size: 13.5px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: #67e8f9;
+    background: linear-gradient(90deg, rgba(34,211,238,0.1), rgba(59,130,246,0.14));
+    border: 1px solid rgba(34,211,238,0.35);
+    box-shadow: 0 0 16px rgba(34,211,238,0.1);
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  .hunt-fini:hover {
+    background: linear-gradient(90deg, rgba(34,211,238,0.18), rgba(59,130,246,0.22));
+    border-color: rgba(34,211,238,0.6);
+    box-shadow: 0 0 22px rgba(34,211,238,0.2);
+    filter: none;
+  }
+  .hunt-fini svg {
+    width: 15px;
+    height: 15px;
   }
   .open-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .open-title { font-weight: 800; font-size: 13.5px; flex: 1; }
@@ -315,7 +375,10 @@
       <button id="noHuntsRefresh" class="primary wide">Actualiser</button>
     </div>
 
-    <button id="startOpen" class="primary wide hunt-fini hidden">Hunt fini — Ouvrir les bonus</button>
+    <button id="startOpen" class="hunt-fini hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v6a5 5 0 0 1-10 0Z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 0 5H7M17 6h2.5a2.5 2.5 0 0 1 0 5H17"/><path d="M12 15v3M8 21h8M10 18h4"/></svg>
+      Hunt fini — Ouvrir les bonus
+    </button>
 
     <div id="profit" class="profit hidden"></div>
 
@@ -557,7 +620,7 @@
     li.innerHTML = `
       <span class="status-dot ${statusClass}"></span>
       <span class="name">${slot.isBounty ? ICONS.flame : ""}${escapeHtml(slot.slotName)}</span>
-      <span class="stake">${fmt(slot.stake, currency)}</span>
+      <span class="stake-chip">${fmt(slot.stake, currency)}</span>
       <span class="badge ${badgeClass}">${badgeText}</span>
       <span class="actions">${action}</span>`;
 
