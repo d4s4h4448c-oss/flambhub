@@ -514,10 +514,10 @@
       <span class="badge ${badgeClass}">${badgeText}</span>
       <span class="actions">${action}</span>`;
 
-    li.querySelector('[data-action="start"]').addEventListener("click", () => setSlotStatus(slot, "in_progress"));
-    li.querySelector('[data-action="collect"]').addEventListener("click", () => showGainInput(li, slot, currency));
-    li.querySelector('[data-action="reopen"]').addEventListener("click", () => setSlotStatus(slot, "in_progress"));
-    li.querySelector('[data-action="delete"]').addEventListener("click", () => deleteSlot(slot));
+    li.querySelector('[data-action="start"]')?.addEventListener("click", () => setSlotStatus(slot, "in_progress"));
+    li.querySelector('[data-action="collect"]')?.addEventListener("click", () => showGainInput(li, slot, currency));
+    li.querySelector('[data-action="reopen"]')?.addEventListener("click", () => setSlotStatus(slot, "in_progress"));
+    li.querySelector('[data-action="delete"]')?.addEventListener("click", () => deleteSlot(slot));
   }
 
   function showGainInput(li, slot, currency) {
