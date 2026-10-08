@@ -188,6 +188,34 @@
   .slot .action.x { color: var(--danger); }
   .slot .gain-input { display: flex; gap: 4px; align-items: center; flex: 1; min-width: 0; }
   .slot .gain-input input { padding: 6px 8px; font-size: 12px; }
+  .hunt-fini {
+    margin-bottom: 8px;
+    background: linear-gradient(180deg, #22d3ee, #0891b2) !important;
+    box-shadow: 0 2px 14px rgba(34,211,238,0.4);
+    font-size: 13.5px;
+  }
+  .open-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .open-title { font-weight: 800; font-size: 13.5px; flex: 1; }
+  .open-progress {
+    font-size: 11px; font-weight: 700; color: var(--cyan);
+    background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.3);
+    border-radius: 999px; padding: 2px 9px;
+  }
+  .open-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .open-name { font-size: 18px; font-weight: 800; }
+  .open-meta { font-size: 11.5px; color: var(--muted); }
+  .bounty-tag {
+    font-size: 10px; font-weight: 800; color: #fb923c;
+    background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.45);
+    border-radius: 999px; padding: 3px 10px; align-self: flex-start;
+  }
+  .open-form { display: flex; gap: 6px; }
+  .open-form input { flex: 1; font-size: 16px; padding: 10px 12px; }
+  .open-actions { display: flex; gap: 6px; }
+  .open-actions button { flex: 1; }
   .fhb-btn {
     position: fixed; top: 10px; right: 10px; z-index: 2147483647;
     width: 40px; height: 40px; border-radius: 12px;
@@ -287,6 +315,8 @@
       <button id="noHuntsRefresh" class="primary wide">Actualiser</button>
     </div>
 
+    <button id="startOpen" class="primary wide hunt-fini hidden">Hunt fini — Ouvrir les bonus</button>
+
     <div id="profit" class="profit hidden"></div>
 
     <div id="huntBar" class="hunt-bar hidden">
@@ -316,6 +346,36 @@
     <datalist id="slotSuggest"></datalist>
 
     <ul id="slotList" class="slots"></ul>
+
+    <div id="openMode" class="hidden">
+      <div class="open-head">
+        <span class="open-title">Ouverture des bonus</span>
+        <span id="openProgress" class="open-progress">0/0</span>
+        <button id="openExit" class="icon" title="Quitter l'ouverture">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="open-card">
+        <div class="open-name" id="openName">—</div>
+        <div class="open-meta" id="openMeta"></div>
+        <span id="openBounty" class="bounty-tag hidden">Bounty</span>
+        <div class="open-form">
+          <input id="openResult" type="number" min="0" step="0.01" placeholder="Résultat" />
+          <button id="openValidate" class="primary">Valider</button>
+        </div>
+        <div class="open-actions">
+          <button id="openSkip">Passer à la fin</button>
+        </div>
+      </div>
+      <div id="openDone" class="card center-card hidden">
+        <div class="empty-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v6a5 5 0 0 1-10 0Z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 0 5H7M17 6h2.5a2.5 2.5 0 0 1 0 5H17"/><path d="M12 15v3M8 21h8M10 18h4"/></svg>
+        </div>
+        <h2>Tous les bonus sont ouverts</h2>
+        <p class="muted">Retourne sur le site pour voir les statistiques et le RTP.</p>
+        <button id="openDoneClose" class="primary wide">Terminer</button>
+      </div>
+    </div>
   `;
 
   panel.appendChild(root);
@@ -374,6 +434,12 @@
     clearError();
     const hasHunts = state.hunts.length > 0;
     $("noHunts").classList.toggle("hidden", hasHunts || !state.url);
+    $("startOpen").classList.toggle("hidden", !hasHunts || !state.url);
+    const openingActive = !$("openMode").classList.contains("hidden");
+    if (openingActive) {
+      if (state.detail) renderOpening();
+      return;
+    }
     $("addForm").classList.toggle("hidden", !hasHunts || !state.url);
     $("profit").classList.toggle("hidden", !state.detail);
     $("huntBar").classList.toggle("hidden", !hasHunts || !state.url);
@@ -464,8 +530,9 @@
     const input = li.querySelector("input");
     input.focus();
     const confirm = () => {
+      if (String(input.value).trim() === "") return;
       const value = Number(String(input.value).replace(",", "."));
-      if (!(value > 0)) return;
+      if (!Number.isFinite(value) || value < 0) return;
       setSlotStatus(slot, "collected", value);
     };
     li.querySelector('[data-action="confirm"]').addEventListener("click", confirm);
@@ -521,8 +588,100 @@
     }
   }
 
+  const opening = { queue: [], index: 0 };
+
+  function currentOpenSlot() {
+    if (!state.detail) return null;
+    return state.detail.slots.find((s) => s.id === opening.queue[opening.index]) || null;
+  }
+
+  function enterOpening() {
+    if (!state.detail) return;
+    const remaining = state.detail.slots.filter((s) => s.status !== "collected");
+    if (remaining.length === 0) return;
+    opening.queue = remaining.map((s) => s.id);
+    opening.index = 0;
+    $("openMode").classList.remove("hidden");
+    $("huntBar").classList.add("hidden");
+    $("startOpen").classList.add("hidden");
+    $("profit").classList.add("hidden");
+    $("addForm").classList.add("hidden");
+    $("slotList").classList.add("hidden");
+    renderOpening();
+  }
+
+  function renderOpening() {
+    const detail = state.detail;
+    if (!detail) return;
+    const total = detail.slots.length;
+    const done = detail.slots.filter((s) => s.status === "collected").length;
+    $("openProgress").textContent = `${done}/${total}`;
+    const slot = currentOpenSlot();
+    if (!slot) {
+      $("openDone").classList.remove("hidden");
+      return;
+    }
+    $("openDone").classList.add("hidden");
+    $("openName").textContent = slot.slotName;
+    $("openMeta").textContent = `Mise ${fmt(slot.stake, detail.currency)}${slot.player ? " · " + slot.player : ""}`;
+    $("openBounty").classList.toggle("hidden", !slot.isBounty);
+    $("openResult").value = "";
+    $("openResult").focus();
+  }
+
+  async function validateOpen() {
+    const slot = currentOpenSlot();
+    if (!slot) return;
+    if (String($("openResult").value).trim() === "") return;
+    const value = Number(String($("openResult").value).replace(",", "."));
+    if (!Number.isFinite(value) || value < 0) return;
+    try {
+      await api(`/api/hunts/${state.selectedId}/slots/${slot.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          slotName: slot.slotName,
+          provider: slot.provider || "",
+          stake: slot.stake,
+          player: slot.player || "",
+          status: "collected",
+          isBounty: !!slot.isBounty,
+          winAmount: value,
+        }),
+      });
+      await loadDetail(state.selectedId);
+      renderOpening();
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  function skipOpen() {
+    const current = opening.queue[opening.index];
+    if (current === undefined) return;
+    opening.queue.splice(opening.index, 1);
+    opening.queue.push(current);
+    renderOpening();
+  }
+
+  function exitOpening() {
+    $("openMode").classList.add("hidden");
+    render();
+  }
+
   function setup() {
     $("closeBtn").addEventListener("click", () => panel.classList.remove("open"));
+
+    $("startOpen").addEventListener("click", enterOpening);
+    $("openValidate").addEventListener("click", () => void validateOpen());
+    $("openResult").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        void validateOpen();
+      }
+    });
+    $("openSkip").addEventListener("click", skipOpen);
+    $("openExit").addEventListener("click", exitOpening);
+    $("openDoneClose").addEventListener("click", exitOpening);
 
     $("refreshBtn").addEventListener("click", () => {
       if (!state.url) return;

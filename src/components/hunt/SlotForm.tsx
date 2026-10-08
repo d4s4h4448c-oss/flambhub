@@ -97,8 +97,8 @@ export default function SlotForm({
       return;
     }
     const winNum = status === "collected" ? Number(winAmount) : 0;
-    if (status === "collected" && !(winNum > 0)) {
-      setError("Une slot collectée doit avoir un gain supérieur à 0.");
+    if (status === "collected" && winAmount.trim() === "") {
+      setError("Renseigne le gain (0 si le bonus est mort).");
       return;
     }
 

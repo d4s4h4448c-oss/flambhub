@@ -158,9 +158,6 @@ export async function addSlot(
   const position = last ? last.position + 1 : 0;
 
   const winAmount = input.status === "collected" ? input.winAmount : 0;
-  if (input.status === "collected" && winAmount <= 0) {
-    throw badRequest("Une slot collectée doit avoir un gain supérieur à 0.");
-  }
 
   const row: HuntSlot = {
     id: randomUUID(),
@@ -196,9 +193,6 @@ export async function updateSlot(
   if (!existing[0]) throw notFound("Slot introuvable.");
 
   const winAmount = input.status === "collected" ? input.winAmount : 0;
-  if (input.status === "collected" && winAmount <= 0) {
-    throw badRequest("Une slot collectée doit avoir un gain supérieur à 0.");
-  }
 
   const collectedAt =
     input.status === "collected"

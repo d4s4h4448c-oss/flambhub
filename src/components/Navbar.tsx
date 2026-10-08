@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Logo from "@/components/Logo";
-import { IconHome, IconSlot, IconSparkles, IconWheel } from "@/components/ui/Icons";
+import { IconDownload, IconHome, IconSlot, IconSparkles, IconWheel } from "@/components/ui/Icons";
 
 const links = [
   { href: "/", label: "Accueil", Icon: IconHome },
   { href: "/roue", label: "Roue", Icon: IconWheel },
   { href: "/bonus-hunt", label: "Bonus Hunt", Icon: IconSlot },
+  { href: "/extension", label: "Extension", Icon: IconDownload },
   { href: "/a-venir", label: "À venir", Icon: IconSparkles },
 ];
 
