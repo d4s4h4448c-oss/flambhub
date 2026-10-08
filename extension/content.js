@@ -316,7 +316,54 @@
     flame: '<svg class="bounty-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.5 4 6 7 6 10.5a6 6 0 0 1-12 0C6 10 8.5 7 12 3Z"/><path d="M12 10.5c1.8 1.8 2.7 3.4 2.7 4.8A2.7 2.7 0 0 1 12 18a2.7 2.7 0 0 1-2.7-2.7c0-1.4.9-3 2.7-4.8Z"/></svg>',
   };
 
-  const FLAME_SVG = `<svg width="20" height="20" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="fhbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00C8FF"/><stop offset="30%" stop-color="#006CFF"/><stop offset="65%" stop-color="#003BFF"/><stop offset="100%" stop-color="#071A45"/></linearGradient></defs><path fill="url(#fhbg)" d="M50 6 C41 13 33 22 29 33 C25 44 23 55 23 64 C23 74 25 82 29 88 Q37 83 44 84 Q47 90 50 93 Q53 90 56 84 Q63 83 71 88 C75 82 77 74 77 64 C77 55 75 44 71 33 C67 22 59 13 50 6 Z"/></svg>`;
+  const FLAME_SVG = `<svg width="20" height="20" viewBox="0 0 100 100" aria-hidden="true"><defs>
+<linearGradient id="fhbh-rim" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#00C8FF"/>
+<stop offset="30%" stop-color="#006CFF"/>
+<stop offset="65%" stop-color="#003BFF"/>
+<stop offset="100%" stop-color="#071A45"/>
+</linearGradient>
+<linearGradient id="fhbh-cyan" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#00C8FF"/>
+<stop offset="100%" stop-color="#006CFF"/>
+</linearGradient>
+<radialGradient id="fhbh-halo" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="rgba(0,200,255,0.35)"/>
+<stop offset="100%" stop-color="rgba(0,200,255,0)"/>
+</radialGradient>
+</defs>
+<g transform="translate(4 4) scale(0.92)">
+<g transform="translate(3.2 3.2) scale(1.3)">
+<path d="M51.3344,58.3018c7.563-9.7894,4.0318-21.8721,2.4461-25.5688c-0.1799-0.4193-0.9302-0.5566-0.982-0.1006 c-0.1225,1.0797-0.4061,2.3611-2.0041,1.9736c-0.8203-0.1989-1.3479-0.556-1.3479-1.8802 c0.511-15.0494-10.5109-25.2968-14.3463-28.5356c-0.5103-0.4309-1.2668,0.0293-1.1587,0.7039 c2.456,15.3348-1.6079,14.2846-3.0986,13.8192c-0.2593-0.081-0.5408,0.0546-0.6603,0.3074 c-4.5882,9.7014-3.4112,14.2653-3.519,17.4455c0,0.2569,0,0.687,0,0.9581c0,1.746-1.4154,2.5822-2.5607,2.0714 c-2.0545-0.9163-2.4047-6.3729-2.4134-7.8235c-0.0041-0.6828-0.8094-0.8791-1.202-0.332 c-8.8048,12.267-2.3251,23.1974-0.0822,26.3171c0.6459,0.8984,0.9025,2.0748,0.5354,3.1298 c-0.0412,0.1183-0.0896,0.2352-0.1465,0.349c-0.3988,0.7981,0.6707,1.4,0.6707,1.4c1.3155,1.2339,5.4651,5.1806,14.2817,5.1805 c7.1344-0.0001,11.9478-3.0595,13.8297-4.7247c0.8829-0.7812,1.2761-0.8594,1.2732-1.6827 C50.8459,60.3243,50.8238,58.8066,51.3344,58.3018" fill="url(#fhbh-rim)"/>
+<path d="M51.3344,58.3018c7.563-9.7894,4.0318-21.8721,2.4461-25.5688c-0.1799-0.4193-0.9302-0.5566-0.982-0.1006 c-0.1225,1.0797-0.4061,2.3611-2.0041,1.9736c-0.8203-0.1989-1.3479-0.556-1.3479-1.8802 c0.511-15.0494-10.5109-25.2968-14.3463-28.5356c-0.5103-0.4309-1.2668,0.0293-1.1587,0.7039 c2.456,15.3348-1.6079,14.2846-3.0986,13.8192c-0.2593-0.081-0.5408,0.0546-0.6603,0.3074 c-4.5882,9.7014-3.4112,14.2653-3.519,17.4455c0,0.2569,0,0.687,0,0.9581c0,1.746-1.4154,2.5822-2.5607,2.0714 c-2.0545-0.9163-2.4047-6.3729-2.4134-7.8235c-0.0041-0.6828-0.8094-0.8791-1.202-0.332 c-8.8048,12.267-2.3251,23.1974-0.0822,26.3171c0.6459,0.8984,0.9025,2.0748,0.5354,3.1298 c-0.0412,0.1183-0.0896,0.2352-0.1465,0.349c-0.3988,0.7981,0.6707,1.4,0.6707,1.4c1.3155,1.2339,5.4651,5.1806,14.2817,5.1805 c7.1344-0.0001,11.9478-3.0595,13.8297-4.7247c0.8829-0.7812,1.2761-0.8594,1.2732-1.6827 C50.8459,60.3243,50.8238,58.8066,51.3344,58.3018" fill="#050505" transform="translate(36 34) scale(0.9) translate(-36 -34)"/>
+</g>
+<g fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round">
+<path d="M 41 84 Q 40 78 38 74"/>
+<path d="M 59 84 Q 60 78 62 74"/>
+</g>
+<g fill="none" stroke="#00C8FF" stroke-width="1" opacity="0.7">
+<path d="M 27 62 Q 29 50 32 42"/>
+<path d="M 73 62 Q 71 50 68 42"/>
+<path d="M 44 30 Q 46 36 48 40"/>
+<path d="M 56 30 Q 54 36 52 40"/>
+</g>
+<g fill="none" stroke="#00C8FF" stroke-width="2.5" opacity="0.5" stroke-linejoin="round">
+<polygon points="38 48, 48 46, 49 50, 39 52.5"/>
+<polygon points="62 48, 52 46, 51 50, 61 52.5"/>
+</g>
+<g fill="url(#fhbh-cyan)" stroke="#00C8FF" stroke-width="0.6" stroke-linejoin="round">
+<polygon points="38 48, 48 46, 49 50, 39 52.5"/>
+<polygon points="62 48, 52 46, 51 50, 61 52.5"/>
+</g>
+<g fill="#000000" stroke="#006CFF" stroke-width="1.4" opacity="0.95" stroke-linejoin="round">
+<polygon points="40 41, 48 46.5, 49 50.5, 39.5 44.5"/>
+<polygon points="60 41, 52 46.5, 51 50.5, 60.5 44.5"/>
+</g>
+<path d="M 47.5 52 L 50 56 L 52.5 52" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 50 56 Q 53 58 56 59" fill="none" stroke="#00C8FF" stroke-width="1" opacity="0.55"/>
+<path d="M 41 64 Q 50 70 59 63" fill="none" stroke="#00C8FF" stroke-width="5" opacity="0.3" stroke-linecap="round"/>
+<path d="M 41 64 Q 50 70 59 63" fill="none" stroke="url(#fhbh-cyan)" stroke-width="2.4" stroke-linecap="round"/>
+</g></svg>`;
 
   /* ============ DOM ============ */
   const host = document.createElement("div");
@@ -329,7 +376,7 @@
   const button = document.createElement("button");
   button.className = "fhb-btn";
   button.title = "FlambHub — Bonus Hunt";
-  button.innerHTML = FLAME_SVG;
+  button.innerHTML = `<svg viewBox="0 0 100 100" fill="none"><defs><linearGradient id="fhbg-rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00C8FF"/><stop offset="30%" stop-color="#006CFF"/><stop offset="65%" stop-color="#003BFF"/><stop offset="100%" stop-color="#071A45"/></linearGradient><linearGradient id="fhbg-cyan" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00C8FF"/><stop offset="100%" stop-color="#006CFF"/></linearGradient><radialGradient id="fhbg-halo" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(0,200,255,0.35)"/><stop offset="100%" stop-color="rgba(0,200,255,0)"/></radialGradient></defs><g transform="translate(4 4) scale(0.92)"><g transform="translate(3.2 3.2) scale(1.3)"><path d="M51.3344,58.3018c7.563-9.7894,4.0318-21.8721,2.4461-25.5688c-0.1799-0.4193-0.9302-0.5566-0.982-0.1006 c-0.1225,1.0797-0.4061,2.3611-2.0041,1.9736c-0.8203-0.1989-1.3479-0.556-1.3479-1.8802 c0.511-15.0494-10.5109-25.2968-14.3463-28.5356c-0.5103-0.4309-1.2668,0.0293-1.1587,0.7039 c2.456,15.3348-1.6079,14.2846-3.0986,13.8192c-0.2593-0.081-0.5408,0.0546-0.6603,0.3074 c-4.5882,9.7014-3.4112,14.2653-3.519,17.4455c0,0.2569,0,0.687,0,0.9581c0,1.746-1.4154,2.5822-2.5607,2.0714 c-2.0545-0.9163-2.4047-6.3729-2.4134-7.8235c-0.0041-0.6828-0.8094-0.8791-1.202-0.332 c-8.8048,12.267-2.3251,23.1974-0.0822,26.3171c0.6459,0.8984,0.9025,2.0748,0.5354,3.1298 c-0.0412,0.1183-0.0896,0.2352-0.1465,0.349c-0.3988,0.7981,0.6707,1.4,0.6707,1.4c1.3155,1.2339,5.4651,5.1806,14.2817,5.1805 c7.1344-0.0001,11.9478-3.0595,13.8297-4.7247c0.8829-0.7812,1.2761-0.8594,1.2732-1.6827 C50.8459,60.3243,50.8238,58.8066,51.3344,58.3018" fill="url(#fhbg-rim)"/><path d="M51.3344,58.3018c7.563-9.7894,4.0318-21.8721,2.4461-25.5688c-0.1799-0.4193-0.9302-0.5566-0.982-0.1006 c-0.1225,1.0797-0.4061,2.3611-2.0041,1.9736c-0.8203-0.1989-1.3479-0.556-1.3479-1.8802 c0.511-15.0494-10.5109-25.2968-14.3463-28.5356c-0.5103-0.4309-1.2668,0.0293-1.1587,0.7039 c2.456,15.3348-1.6079,14.2846-3.0986,13.8192c-0.2593-0.081-0.5408,0.0546-0.6603,0.3074 c-4.5882,9.7014-3.4112,14.2653-3.519,17.4455c0,0.2569,0,0.687,0,0.9581c0,1.746-1.4154,2.5822-2.5607,2.0714 c-2.0545-0.9163-2.4047-6.3729-2.4134-7.8235c-0.0041-0.6828-0.8094-0.8791-1.202-0.332 c-8.8048,12.267-2.3251,23.1974-0.0822,26.3171c0.6459,0.8984,0.9025,2.0748,0.5354,3.1298 c-0.0412,0.1183-0.0896,0.2352-0.1465,0.349c-0.3988,0.7981,0.6707,1.4,0.6707,1.4c1.3155,1.2339,5.4651,5.1806,14.2817,5.1805 c7.1344-0.0001,11.9478-3.0595,13.8297-4.7247c0.8829-0.7812,1.2761-0.8594,1.2732-1.6827 C50.8459,60.3243,50.8238,58.8066,51.3344,58.3018" fill="#050505" transform="translate(36 34) scale(0.9) translate(-36 -34)"/></g><g fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round"><path d="M 41 84 Q 40 78 38 74"/><path d="M 59 84 Q 60 78 62 74"/></g><g fill="none" stroke="#00C8FF" stroke-width="1" opacity="0.7"><path d="M 27 62 Q 29 50 32 42"/><path d="M 73 62 Q 71 50 68 42"/><path d="M 44 30 Q 46 36 48 40"/><path d="M 56 30 Q 54 36 52 40"/></g><g fill="none" stroke="#00C8FF" stroke-width="2.5" opacity="0.5" stroke-linejoin="round"><polygon points="38 48, 48 46, 49 50, 39 52.5"/><polygon points="62 48, 52 46, 51 50, 61 52.5"/></g><g fill="url(#fhbg-cyan)" stroke="#00C8FF" stroke-width="0.6" stroke-linejoin="round"><polygon points="38 48, 48 46, 49 50, 39 52.5"/><polygon points="62 48, 52 46, 51 50, 61 52.5"/></g><g fill="#000000" stroke="#006CFF" stroke-width="1.4" opacity="0.95" stroke-linejoin="round"><polygon points="40 41, 48 46.5, 49 50.5, 39.5 44.5"/><polygon points="60 41, 52 46.5, 51 50.5, 60.5 44.5"/></g><path d="M 47.5 52 L 50 56 L 52.5 52" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M 50 56 Q 53 58 56 59" fill="none" stroke="#00C8FF" stroke-width="1" opacity="0.55"/><path d="M 41 64 Q 50 70 59 63" fill="none" stroke="#00C8FF" stroke-width="5" opacity="0.3" stroke-linecap="round"/><path d="M 41 64 Q 50 70 59 63" fill="none" stroke="url(#fhbg-cyan)" stroke-width="2.4" stroke-linecap="round"/></g></svg>`;
 
   const panel = document.createElement("div");
   panel.className = "fhb-panel";
