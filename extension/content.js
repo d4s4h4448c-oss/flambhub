@@ -384,6 +384,40 @@
   shadow.appendChild(panel);
   document.documentElement.appendChild(host);
 
+  /* ============ Garde anti-invalidation ============ */
+  function onContextInvalidated() {
+    try {
+      if (!sessionStorage.getItem("flambhub-reloaded")) {
+        sessionStorage.setItem("flambhub-reloaded", "1");
+        location.reload();
+        return;
+      }
+    } catch {
+      /* ignorer */
+    }
+    try {
+      root.innerHTML = "";
+      const errBox = document.createElement("div");
+      errBox.className = "alert";
+      errBox.style.margin = "10px";
+      errBox.textContent =
+        "Extension rechargée : actualise la page (Cmd + R) pour activer la nouvelle version.";
+      root.appendChild(errBox);
+      panel.classList.add("open");
+    } catch {
+      /* ignorer */
+    }
+  }
+
+  function isInvalidation(err) {
+    const msg = (err && err.message ? err.message : String(err)).toLowerCase();
+    return (
+      msg.includes("extension context invalidated") ||
+      msg.includes("invalid extension context") ||
+      msg.includes("context invalidated")
+    );
+  }
+
   /* ============ Logique ============ */
   const $ = (id) => shadow.getElementById(id);
 
@@ -411,26 +445,36 @@
     // Les requêtes passent par le service worker : elles échappent à la CSP
     // des sites visités (Stake, etc.).
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: "flambhub-api", path, options }, (resp) => {
-        if (chrome.runtime.lastError) {
-          reject(
-            new Error(
-              "Extension mise à jour : recharge la page (Cmd + R) puis réessaie.",
-            ),
-          );
+      try {
+        chrome.runtime.sendMessage({ type: "flambhub-api", path, options }, (resp) => {
+          if (chrome.runtime.lastError) {
+            if (isInvalidation(chrome.runtime.lastError)) {
+              onContextInvalidated();
+              reject(new Error("Extension rechargée : la page se rafraîchit."));
+              return;
+            }
+            reject(new Error("Extension mise à jour : recharge la page (Cmd + R) puis réessaie."));
+            return;
+          }
+          if (!resp) {
+            reject(new Error("Pas de réponse de l'extension."));
+            return;
+          }
+          if (!resp.ok) {
+            const serverError = resp.data && resp.data.error ? resp.data.error : null;
+            reject(new Error(serverError || resp.error || `Erreur serveur (${resp.status})`));
+            return;
+          }
+          resolve(resp.data);
+        });
+      } catch (err) {
+        if (isInvalidation(err)) {
+          onContextInvalidated();
+          reject(new Error("Extension rechargée : la page se rafraîchit."));
           return;
         }
-        if (!resp) {
-          reject(new Error("Pas de réponse de l'extension."));
-          return;
-        }
-        if (!resp.ok) {
-          const serverError = resp.data && resp.data.error ? resp.data.error : null;
-          reject(new Error(serverError || resp.error || `Erreur serveur (${resp.status})`));
-          return;
-        }
-        resolve(resp.data);
-      });
+        reject(err);
+      }
     });
   }
 
@@ -790,11 +834,15 @@
     e.stopPropagation();
   });
 
-  chrome.runtime.onMessage.addListener((msg) => {
-    if (msg && msg.type === "flambhub-toggle") {
-      panel.classList.toggle("open");
-    }
-  });
+  try {
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (msg && msg.type === "flambhub-toggle") {
+        panel.classList.toggle("open");
+      }
+    });
+  } catch (err) {
+    if (isInvalidation(err)) onContextInvalidated();
+  }
 
   /* ============ Init ============ */
   try {
@@ -812,7 +860,8 @@
     return;
   }
 
-  chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
+  try {
+    chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
     try {
       if (result.serverUrl) {
         state.url = result.serverUrl;
@@ -829,9 +878,16 @@
         panel.classList.add("open");
       }
     } catch (err) {
+      if (isInvalidation(err)) {
+        onContextInvalidated();
+        return;
+      }
       showError(err.message);
       $("settings").classList.remove("hidden");
       panel.classList.add("open");
     }
-  });
+    });
+  } catch (err) {
+    if (isInvalidation(err)) onContextInvalidated();
+  }
 })();
