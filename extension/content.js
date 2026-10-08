@@ -702,7 +702,18 @@
 
   function currentOpenSlot() {
     if (!state.detail) return null;
-    return state.detail.slots.find((s) => s.id === opening.queue[opening.index]) || null;
+    // Avance au-delà des slots déjà collectés : après validation,
+    // on passe directement au bonus suivant.
+    while (opening.index < opening.queue.length) {
+      const slot = state.detail.slots.find((s) => s.id === opening.queue[opening.index]);
+      if (!slot) {
+        opening.index += 1;
+        continue;
+      }
+      if (slot.status !== "collected") return slot;
+      opening.index += 1;
+    }
+    return null;
   }
 
   function enterOpening() {
