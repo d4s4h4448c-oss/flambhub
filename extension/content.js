@@ -5,12 +5,12 @@
   /* ============ Styles ============ */
   const CSS = `
   .fhb-root {
-    --bg: #060a14;
-    --surface: #0b1220;
-    --surface-2: #0f1728;
-    --surface-3: #1a2438;
-    --border: #223252;
-    --border-strong: #33507d;
+    --bg: #080d1c;
+    --surface: #0d1526;
+    --surface-2: #111c33;
+    --surface-3: #1c2a49;
+    --border: #2a3e62;
+    --border-strong: #3d5b8f;
     --fg: #e6edf7;
     --muted: #8fa3bd;
     --primary: #3b82f6;
@@ -18,7 +18,7 @@
     --cyan: #22d3ee;
     --success: #34d399;
     --danger: #f87171;
-    background: radial-gradient(420px 220px at 90% -10%, rgba(59,130,246,0.35), transparent 60%), radial-gradient(300px 200px at -10% 110%, rgba(34,211,238,0.14), transparent 60%), var(--bg);
+    background: radial-gradient(420px 220px at 90% -10%, rgba(59,130,246,0.45), transparent 62%), radial-gradient(300px 200px at -10% 110%, rgba(34,211,238,0.22), transparent 60%), var(--bg);
     color: var(--fg);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 12.5px;
@@ -301,7 +301,7 @@
     position: fixed; top: 58px; right: 10px; z-index: 2147483646;
     width: 380px; height: min(600px, calc(100vh - 70px));
     border: 1px solid rgba(42,63,95,0.9); border-radius: 14px;
-    overflow: hidden; background: #060a14;
+    overflow: hidden; background: #080d1c;
     box-shadow: 0 18px 50px rgba(0,0,0,0.6);
     display: none;
   }
