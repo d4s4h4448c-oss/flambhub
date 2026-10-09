@@ -40,7 +40,7 @@ export default function Logo({
     <Link
       href={href}
       onClick={onClick}
-      className="group flex items-center gap-2"
+      className="group flex items-center gap-2.5"
       aria-label="FlambHub — Accueil"
     >
       <LogoMark
