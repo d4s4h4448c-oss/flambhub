@@ -62,7 +62,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md">
-      <nav className="mx-auto flex h-16 w-full max-w-[96rem] items-center justify-between px-4 sm:px-6">
+      <nav className="mx-auto flex h-16 w-full max-w-[96rem] items-center justify-between px-4 pr-16 sm:px-6 sm:pr-16">
         <Logo size={30} onClick={() => setOpen(false)} />
 
         <div className="hidden items-center gap-1 md:flex">

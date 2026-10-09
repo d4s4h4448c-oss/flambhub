@@ -2,17 +2,7 @@
   if (window.top !== window) return;
   if (document.getElementById("flambhub-widget")) return;
 
-  // Pas de widget sur FlambHub lui-même (le site a déjà sa page Bonus Hunt).
-  const hostname = location.hostname.toLowerCase();
-  if (
-    hostname === "flambhub.vercel.app" ||
-    hostname === "www.flambhub.vercel.app" ||
-    hostname.endsWith(".vercel.app") ||
-    hostname === "localhost" ||
-    hostname === "127.0.0.1"
-  ) {
-    return;
-  }
+
 
   /* ============ Styles ============ */
   const CSS = `
