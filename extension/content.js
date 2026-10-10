@@ -290,6 +290,8 @@
   .open-actions button { flex: 1; }
   .fhb-btn {
     position: fixed; top: 10px; right: 10px; z-index: 2147483647;
+    cursor: grab;
+    touch-action: none;
     width: 40px; height: 40px; border-radius: 12px;
     background: linear-gradient(160deg, rgba(59,130,246,0.25), rgba(13,19,32,0.95));
     border: 1px solid rgba(96,165,250,0.5);
@@ -971,20 +973,86 @@
     });
   }
 
-  /* ============ Toggle ============ */
+  /* ============ Toggle / Drag ============ */
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+  const btnRect = () => button.getBoundingClientRect();
+
+  function positionPanel() {
+    const r = btnRect();
+    const panelW = Math.min(380, window.innerWidth - 16);
+    const top = Math.min(r.bottom + 8, window.innerHeight - 8);
+    const height = Math.max(200, Math.min(600, window.innerHeight - top - 8));
+    const left = Math.min(Math.max(8, r.left), Math.max(8, window.innerWidth - panelW - 8));
+    panel.style.width = panelW + "px";
+    panel.style.height = height + "px";
+    panel.style.top = top + "px";
+    panel.style.left = left + "px";
+    panel.style.right = "auto";
+  }
+
+  let dragging = false;
+  let moved = false;
+  let startX = 0;
+  let startY = 0;
+  let origLeft = 0;
+  let origTop = 0;
+
+  button.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    dragging = true;
+    moved = false;
+    const r = btnRect();
+    button.style.right = "auto";
+    button.style.left = r.left + "px";
+    button.style.top = r.top + "px";
+    startX = e.clientX;
+    startY = e.clientY;
+    origLeft = r.left;
+    origTop = r.top;
+    try {
+      button.setPointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+    e.preventDefault();
+  });
+
+  button.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+    const r = btnRect();
+    button.style.left = clamp(origLeft + dx, 4, window.innerWidth - r.width - 4) + "px";
+    button.style.top = clamp(origTop + dy, 4, window.innerHeight - r.height - 4) + "px";
+  });
+
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    if (panel.classList.contains("open")) positionPanel();
+  };
+
+  button.addEventListener("pointerup", endDrag);
+  button.addEventListener("pointercancel", endDrag);
+
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     e.preventDefault();
-    panel.classList.toggle("open");
+    if (dragging || moved) return;
+    const open = panel.classList.toggle("open");
+    if (open) positionPanel();
   });
-  button.addEventListener("pointerup", (e) => {
-    e.stopPropagation();
+
+  window.addEventListener("resize", () => {
+    if (panel.classList.contains("open")) positionPanel();
   });
 
   try {
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg && msg.type === "flambhub-toggle") {
-        panel.classList.toggle("open");
+        const open = panel.classList.toggle("open");
+        if (open) positionPanel();
       }
     });
   } catch (err) {
