@@ -419,11 +419,12 @@ export default function HuntApp() {
         {linkOpen && (
           <div className="mt-4 space-y-3 border-t border-border pt-4">
             <p className="text-sm text-muted">
-              Ton code est unique et privé : seuls tes hunts te sont visibles.
-              Entre ce code (avec l&apos;URL du site) dans les réglages de
-              l&apos;extension pour ajouter tes bonus pendant que tu joues —
-              tout sera synchronisé ici, avec le RTP, les stats et les
-              graphiques.
+              Ton code est unique et généré automatiquement par ce navigateur :
+              chaque personne a le sien, personne ne voit tes hunts et tu ne
+              vois pas les leurs. Entre ce code (avec l&apos;URL du site) dans
+              les réglages de l&apos;extension pour ajouter tes bonus pendant
+              que tu joues — tout sera synchronisé ici, avec le RTP, les stats
+              et les graphiques.
             </p>
             {linkCode ? (
               <>
