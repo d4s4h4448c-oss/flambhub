@@ -132,6 +132,7 @@ export default function HuntApp() {
     return code;
   });
   const [copied, setCopied] = useState(false);
+  const [recoverValue, setRecoverValue] = useState("");
 
   const loadHunts = useCallback(async () => {
     try {
@@ -235,6 +236,27 @@ export default function HuntApp() {
       /* presse-papiers indisponible */
     }
   }, [linkCode]);
+
+  const handleRecover = useCallback(() => {
+    const groups = recoverValue
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "")
+      .match(/[A-Z0-9]{4}/g)
+      ?.slice(0, 3);
+    if (!groups || groups.length !== 3) {
+      setError("Code invalide : le format est XXXX-XXXX-XXXX.");
+      return;
+    }
+    const code = groups.join("-");
+    setClientCode(code);
+    setLinkCode(code);
+    setRecoverValue("");
+    setSelectedId(null);
+    setDetail(null);
+    setCharts(null);
+    void loadHunts();
+  }, [recoverValue, loadHunts]);
 
   const handleCreateHunt = async () => {
     if (!name.trim() || creating) return;
@@ -461,7 +483,37 @@ export default function HuntApp() {
                 <p className="text-xs text-muted">
                   Le code est enregistré dans ce navigateur : tes données sont
                   privées et conservées, visibles uniquement avec ce code.
+                  Note-le aussi ailleurs — c&apos;est ta clé pour récupérer tes
+                  hunts sur un autre appareil.
                 </p>
+
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs font-semibold text-muted">
+                    Récupérer mes données
+                  </p>
+                  <p className="mt-1 text-xs text-muted">
+                    Colle ton ancien code pour retrouver tes hunts sur cet
+                    appareil.
+                  </p>
+                  <div className="mt-2 flex gap-2">
+                    <Input
+                      placeholder="XXXX-XXXX-XXXX"
+                      value={recoverValue}
+                      onChange={(e) => setRecoverValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleRecover();
+                        }
+                      }}
+                      maxLength={14}
+                      className="flex-1"
+                    />
+                    <Button size="sm" onClick={handleRecover}>
+                      Récupérer
+                    </Button>
+                  </div>
+                </div>
               </>
             ) : (
               <Button onClick={applyNewCode}>Générer mon code</Button>

@@ -414,7 +414,7 @@
       <div class="panel-title">Connexion au serveur</div>
       <label>URL du serveur</label>
       <input id="serverUrl" placeholder="https://flambhub.vercel.app" spellcheck="false" />
-      <label>Code de liaison</label>
+      <label>Code de liaison (clé de récupération)</label>
       <input id="linkCode" placeholder="XXXX-XXXX-XXXX" spellcheck="false" maxlength="14" />
       <label>Clé d'administration (optionnelle)</label>
       <input id="adminToken" type="password" placeholder="Clé ADMIN_API_TOKEN" spellcheck="false" />
