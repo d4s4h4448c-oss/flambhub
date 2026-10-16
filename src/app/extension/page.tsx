@@ -11,16 +11,16 @@ import {
 } from "@/components/ui/Icons";
 
 export const metadata: Metadata = {
-  title: "Extension Chrome",
+  title: "Extension",
   description:
-    "Télécharge l'extension FlambHub pour ajouter tes bonus sans quitter ton casino.",
+    "Télécharge l'extension FlambHub pour Chrome, Brave, Edge, Opera et Firefox : ajoute tes bonus sans quitter ton casino.",
 };
 
 const steps = [
   {
     title: "Télécharge le fichier",
     description:
-      "Clique sur le bouton ci-dessus : tu reçois un fichier extension.zip.",
+      "Clique sur le bouton de ton navigateur : tu reçois un fichier ZIP.",
   },
   {
     title: "Décompresse-le",
@@ -28,19 +28,28 @@ const steps = [
       "Double-clic sur le ZIP : un dossier « extension » est créé à côté.",
   },
   {
-    title: "Charge-le dans Chrome",
+    title: "Charge-le dans ton navigateur",
     description:
-      "Ouvre chrome://extensions, active le « Mode développeur » (en haut à droite), puis clique « Charger l'extension non empaquetée » et choisis le dossier « extension ».",
+      "Ouvre la page des extensions de ton navigateur, active le « Mode développeur », puis « Charger l'extension non empaquetée » en choisissant le dossier « extension ».",
   },
   {
     title: "Épingle et relie ton compte",
     description:
-      "Épingle l'icône FlambHub (icône puzzle → 📌). Au premier lancement, entre l'URL du site et ton code de liaison (page Bonus Hunt → « Lier l'extension »).",
+      "Épingle l'icône FlambHub. Au premier lancement, entre l'URL du site et ton code de liaison (page Bonus Hunt → « Lier l'extension »).",
   },
 ];
 
+const browsers = [
+  { name: "Chrome", url: "chrome://extensions", file: "/extension.zip" },
+  { name: "Brave", url: "brave://extensions", file: "/extension.zip" },
+  { name: "Edge", url: "edge://extensions", file: "/extension.zip" },
+  { name: "Opera", url: "opera://extensions", file: "/extension.zip" },
+  { name: "Vivaldi", url: "vivaldi://extensions", file: "/extension.zip" },
+  { name: "Firefox", url: "about:debugging#/runtime/this-firefox", file: "/extension-firefox.zip" },
+];
+
 const features = [
-  { icon: IconFlame, label: "Encoche flottante sur toutes les pages" },
+  { icon: IconFlame, label: "Encoche flottante déplaçable sur toutes les pages" },
   { icon: IconDownload, label: "Ajoute tes slots en un clic pendant que tu joues" },
   { icon: IconCheck, label: "Mode « Hunt fini » : écris les résultats un par un" },
   { icon: IconLink, label: "Synchronisé avec le site : RTP, stats et graphiques" },
@@ -51,8 +60,8 @@ export default function ExtensionPage() {
     <div className="animate-fade-in-up">
       <PageHeader
         icon={<IconDownload className="size-6" />}
-        title="Extension Chrome"
-        subtitle="Ajoute et collecte tes bonus sans jamais quitter ton casino : une petite encoche flottante s'ouvre sur n'importe quelle page."
+        title="Extension"
+        subtitle="Ajoute et collecte tes bonus sans jamais quitter ton casino : une petite encoche flottante déplaçable s'ouvre sur n'importe quelle page."
       />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -73,37 +82,49 @@ export default function ExtensionPage() {
               ))}
             </ol>
             <p className="mt-4 text-xs text-muted">
-              Pas encore sur le Chrome Web Store : l&apos;installation en mode
+              Pas encore sur les stores officiels : l&apos;installation en mode
               développeur est gratuite et prend 2 minutes. La publication
               officielle arrivera bientôt.
             </p>
           </Card>
 
           <Card className="p-6">
-            <h2 className="font-display text-xl font-bold">Ce que ça fait</h2>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {features.map((feature) => (
-                <li
-                  key={feature.label}
-                  className="flex items-start gap-2.5 rounded-xl border border-border bg-surface-2/60 p-3.5 text-sm"
+            <h2 className="font-display text-xl font-bold">Navigateurs compatibles</h2>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              {browsers.map((browser) => (
+                <div
+                  key={browser.name}
+                  className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface-2/60 p-3 text-sm"
                 >
-                  <feature.icon className="mt-0.5 size-4 shrink-0 text-primary-strong" />
-                  {feature.label}
-                </li>
+                  <span className="font-semibold">{browser.name}</span>
+                  <a
+                    href={browser.file}
+                    download
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary/15 px-3 py-1.5 text-xs font-semibold text-primary-strong transition-colors hover:bg-primary/25"
+                  >
+                    <IconDownload className="size-3.5" />
+                    ZIP
+                  </a>
+                </div>
               ))}
-            </ul>
+            </div>
+            <p className="mt-3 text-xs text-muted">
+              Firefox : « Charger un module complémentaire temporaire… » puis
+              choisis le fichier <code className="rounded bg-surface-3 px-1">manifest.json</code>{" "}
+              dans le dossier décompressé.
+            </p>
           </Card>
         </div>
 
         <div className="space-y-4">
           <Card className="glow-primary border-primary/30 p-6 text-center">
             <Badge tone="flame" className="mb-3">
-              Gratuit
+              Gratuit · v2.1
             </Badge>
-            <h2 className="font-display text-xl font-bold">FlambHub pour Chrome</h2>
+            <h2 className="font-display text-xl font-bold">FlambHub pour ton navigateur</h2>
             <p className="mt-2 text-sm text-muted">
-              Version 2.0 — l&apos;encoche Bonus Hunt, discrète et toujours
-              disponible.
+              Chrome, Brave, Edge, Opera, Vivaldi et Firefox — l&apos;encoche
+              Bonus Hunt, discrète, déplaçable et toujours disponible.
             </p>
             <a
               href="/extension.zip"
@@ -111,10 +132,18 @@ export default function ExtensionPage() {
               className="glow-primary mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-blue-500 to-blue-700 px-6 py-3.5 font-semibold text-white transition-all hover:brightness-110"
             >
               <IconDownload className="size-5" />
-              Télécharger l&apos;extension
+              Télécharger (Chrome / Brave / Edge)
+            </a>
+            <a
+              href="/extension-firefox.zip"
+              download
+              className="mt-2.5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface-2 px-6 py-3 font-semibold text-foreground transition-colors hover:border-border-strong hover:bg-surface-3"
+            >
+              <IconDownload className="size-5" />
+              Télécharger pour Firefox
             </a>
             <p className="mt-3 text-xs text-muted">
-              Fichier ZIP · 50 Ko · Chrome 116 ou plus
+              Fichiers ZIP · ~65 Ko · version 2.1
             </p>
           </Card>
 

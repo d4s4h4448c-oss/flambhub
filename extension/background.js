@@ -1,7 +1,9 @@
-chrome.action.onClicked.addListener(async (tab) => {
+const api = globalThis.browser ?? globalThis.chrome;
+
+api.action.onClicked.addListener(async (tab) => {
   if (tab && tab.id) {
     try {
-      await chrome.tabs.sendMessage(tab.id, { type: "flambhub-toggle" });
+      await api.tabs.sendMessage(tab.id, { type: "flambhub-toggle" });
     } catch {
       /* page sans content script (chrome://, Web Store…) */
     }
@@ -10,18 +12,23 @@ chrome.action.onClicked.addListener(async (tab) => {
 
 // Les requêtes API passent par le service worker : elles ne sont pas
 // soumises à la politique de sécurité (CSP) des sites visités.
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (!msg || msg.type !== "flambhub-api") return false;
+api.runtime.onMessage.addListener((msg) => {
+  if (!msg || msg.type !== "flambhub-api") return;
 
-  (async () => {
+  return (async () => {
     try {
-      const { serverUrl, linkCode, adminToken } = await chrome.storage.local.get([
+      const { serverUrl, linkCode, adminToken } = await api.storage.local.get([
         "serverUrl",
         "linkCode",
         "adminToken",
       ]);
       if (!serverUrl) {
-        throw new Error("Configure l'URL du serveur (réglages).");
+        return {
+          ok: false,
+          status: 0,
+          error: "Configure l'URL du serveur (réglages).",
+          data: {},
+        };
       }
       const headers = { "Content-Type": "application/json", ...(msg.headers || {}) };
       if (linkCode) headers["x-flamb-code"] = String(linkCode).toUpperCase();
@@ -32,16 +39,14 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         headers,
       });
       const data = await res.json().catch(() => ({}));
-      sendResponse({ ok: res.ok, status: res.status, data });
+      return { ok: res.ok, status: res.status, data };
     } catch (err) {
-      sendResponse({
+      return {
         ok: false,
         status: 0,
         error: err && err.message ? err.message : String(err),
         data: {},
-      });
+      };
     }
   })();
-
-  return true;
 });

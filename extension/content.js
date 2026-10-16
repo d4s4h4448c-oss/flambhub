@@ -1,4 +1,5 @@
 (() => {
+  const api = globalThis.browser ?? globalThis.chrome;
   if (window.top !== window) return;
   if (document.getElementById("flambhub-widget")) return;
 
@@ -564,21 +565,24 @@
     $("error").classList.add("hidden");
   }
 
-  function api(path, options = {}) {
+  function requestApi(path, options = {}) {
     // Les requêtes passent par le service worker : elles échappent à la CSP
     // des sites visités (Stake, etc.).
     return new Promise((resolve, reject) => {
+      let request;
       try {
-        chrome.runtime.sendMessage({ type: "flambhub-api", path, options }, (resp) => {
-          if (chrome.runtime.lastError) {
-            if (isInvalidation(chrome.runtime.lastError)) {
-              onContextInvalidated();
-              reject(new Error("Extension rechargée : la page se rafraîchit."));
-              return;
-            }
-            reject(new Error("Extension mise à jour : recharge la page (Cmd + R) puis réessaie."));
-            return;
-          }
+        request = api.runtime.sendMessage({ type: "flambhub-api", path, options });
+      } catch (err) {
+        if (isInvalidation(err)) {
+          onContextInvalidated();
+          reject(new Error("Extension rechargée : la page se rafraîchit."));
+          return;
+        }
+        reject(err);
+        return;
+      }
+      request
+        .then((resp) => {
           if (!resp) {
             reject(new Error("Pas de réponse de l'extension."));
             return;
@@ -589,15 +593,15 @@
             return;
           }
           resolve(resp.data);
+        })
+        .catch((err) => {
+          if (isInvalidation(err)) {
+            onContextInvalidated();
+            reject(new Error("Extension rechargée : la page se rafraîchit."));
+            return;
+          }
+          reject(new Error("Extension mise à jour : recharge la page (Cmd + R) puis réessaie."));
         });
-      } catch (err) {
-        if (isInvalidation(err)) {
-          onContextInvalidated();
-          reject(new Error("Extension rechargée : la page se rafraîchit."));
-          return;
-        }
-        reject(err);
-      }
     });
   }
 
@@ -727,7 +731,7 @@
   }
 
   async function loadHunts() {
-    const data = await api("/api/hunts");
+    const data = await requestApi("/api/hunts");
     state.hunts = data.hunts || [];
     const valid = state.hunts.some((h) => h.id === state.selectedId);
     if (!valid) state.selectedId = state.hunts[0]?.id ?? null;
@@ -738,14 +742,14 @@
 
   async function loadDetail(huntId) {
     state.selectedId = huntId;
-    const data = await api(`/api/hunts/${huntId}`);
+    const data = await requestApi(`/api/hunts/${huntId}`);
     state.detail = data.hunt;
     render();
   }
 
   async function setSlotStatus(slot, status, winAmount) {
     try {
-      await api(`/api/hunts/${state.selectedId}/slots/${slot.id}`, {
+      await requestApi(`/api/hunts/${state.selectedId}/slots/${slot.id}`, {
         method: "PATCH",
         body: JSON.stringify({
           slotName: slot.slotName,
@@ -765,7 +769,7 @@
 
   async function deleteSlot(slot) {
     try {
-      await api(`/api/hunts/${state.selectedId}/slots/${slot.id}`, { method: "DELETE" });
+      await requestApi(`/api/hunts/${state.selectedId}/slots/${slot.id}`, { method: "DELETE" });
       await loadDetail(state.selectedId);
     } catch (err) {
       showError(err.message);
@@ -836,7 +840,7 @@
     const value = Number(String($("openResult").value).replace(",", "."));
     if (!Number.isFinite(value) || value < 0) return;
     try {
-      await api(`/api/hunts/${state.selectedId}/slots/${slot.id}`, {
+      await requestApi(`/api/hunts/${state.selectedId}/slots/${slot.id}`, {
         method: "PATCH",
         body: JSON.stringify({
           slotName: slot.slotName,
@@ -908,7 +912,7 @@
       state.url = url;
       state.linkCode = code;
       state.adminToken = $("adminToken").value.trim();
-      await chrome.storage.local.set({ serverUrl: url, linkCode: code, adminToken: state.adminToken });
+      await api.storage.local.set({ serverUrl: url, linkCode: code, adminToken: state.adminToken });
       $("settings").classList.add("hidden");
       try {
         await loadHunts();
@@ -960,7 +964,7 @@
         isBounty,
       };
       try {
-        await api(`/api/hunts/${state.selectedId}/slots`, { method: "POST", body: JSON.stringify(body) });
+        await requestApi(`/api/hunts/${state.selectedId}/slots`, { method: "POST", body: JSON.stringify(body) });
         $("slotName").value = "";
         $("slotStake").value = "";
         $("slotBounty").checked = false;
@@ -1049,7 +1053,7 @@
   });
 
   try {
-    chrome.runtime.onMessage.addListener((msg) => {
+    api.runtime.onMessage.addListener((msg) => {
       if (msg && msg.type === "flambhub-toggle") {
         const open = panel.classList.toggle("open");
         if (open) positionPanel();
@@ -1087,7 +1091,7 @@
     loadHunts().catch(() => {});
   }, 4000);
 
-  chrome.storage.local.get(["serverUrl", "linkCode", "adminToken"], async (result) => {
+  api.storage.local.get(["serverUrl", "linkCode", "adminToken"]).then(async (result) => {
     try {
       if (result.serverUrl) {
         state.url = result.serverUrl;
